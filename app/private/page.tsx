@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
+import { Button } from "@/components/ui/button";
 
 export const logout = async () => {
   "use server";
@@ -21,7 +22,9 @@ export default async function PrivatePage() {
     <div>
       <p>Hello {data.user.email}</p>
       <form action={logout}>
-        <button type="submit">Log out</button>
+        <Button type="submit" variant="destructive">
+          Log out
+        </Button>
       </form>
     </div>
   );
