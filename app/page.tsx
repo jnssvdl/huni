@@ -1,3 +1,10 @@
+import { ModeToggle } from "@/components/mode-toggle";
+
 export default function Home() {
-  return <h1>Huni</h1>;
+  return (
+    <div>
+      <h1>Huni</h1>
+      <ModeToggle />
+    </div>
+  );
 }
