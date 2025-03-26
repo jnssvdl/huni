@@ -9,7 +9,9 @@ export default function LoginForm() {
   return (
     <form className="flex flex-col gap-4" action={login}>
       <div className="flex flex-col gap-1.5">
-        <Label className="text-sm">Email</Label>
+        <Label htmlFor="email" className="text-sm">
+          Email
+        </Label>
         <Input
           id="email"
           name="email"
@@ -19,7 +21,9 @@ export default function LoginForm() {
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label className="text-sm">Password</Label>
+        <Label htmlFor="password" className="text-sm">
+          Password
+        </Label>
         <Input
           id="password"
           name="password"
