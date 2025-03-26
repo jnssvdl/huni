@@ -59,12 +59,21 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
+    const hasUsername = profile?.username;
+
     if (
-      !profile?.username &&
-      !request.nextUrl.pathname.startsWith("/onboarding")
+      !hasUsername &&
+      !request.nextUrl.pathname.startsWith("/onboarding") &&
+      !request.nextUrl.pathname.startsWith("/auth")
     ) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
+      return NextResponse.redirect(url);
+    }
+
+    if (hasUsername && request.nextUrl.pathname.startsWith("/onboarding")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
       return NextResponse.redirect(url);
     }
   }
