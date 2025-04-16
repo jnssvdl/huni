@@ -26,7 +26,7 @@ export default function ProfileForm() {
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col items-center gap-4">
-        <Avatar className="h-40 w-40">
+        <Avatar className="h-36 w-36">
           <AvatarImage
             src={avatar || "/default_profile.png"}
             alt="Avatar preview"
@@ -48,11 +48,11 @@ export default function ProfileForm() {
             />
           </label>
         </Button>
-      </div>
 
-      {state?.errors.avatar && (
-        <p className="text-destructive">{state.errors.avatar[0]}</p>
-      )}
+        {state?.errors.avatar && (
+          <p className="text-destructive">{state.errors.avatar[0]}</p>
+        )}
+      </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="username" className="text-sm">

@@ -7,14 +7,12 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
       <div className="fixed top-2 right-2">
         <ModeToggle />
       </div>
-      <div className="max-w-md p-4">
-        <HeroSection />
-        {children}
-      </div>
+      <HeroSection />
+      {children}
     </div>
   );
 }

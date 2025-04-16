@@ -14,18 +14,17 @@ export const logout = async () => {
 export default function OnboardingPage() {
   return (
     <div className="flex min-h-screen justify-center">
-      <div className="w-full max-w-md border-x p-4">
-        <div className="mb-4 text-center">
+      <div className="flex w-full max-w-xl flex-col gap-4 border p-4">
+        <div className="text-center">
           <h1 className="text-4xl font-bold">Hello there! 👋</h1>
-          <p className="text-muted-foreground text-sm">
-            Before you start, let&apos;s add your avatar, username, and a short
-            bio.
+          <p className="text-muted-foreground">
+            Before we begin, add your avatar, username, and a short bio.
           </p>
         </div>
 
         <ProfileForm />
 
-        <form action={logout} className="mt-4">
+        <form action={logout} className="">
           <Button type="submit" variant="destructive" className="w-full">
             Log out
           </Button>

@@ -3,7 +3,7 @@ import RegisterForm from "../_components/register-form";
 
 export default function RegisterPage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       <RegisterForm />
 
       <div className="text-center text-sm">
