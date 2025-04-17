@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/header";
 import PostForm from "@/components/post-form";
+import Newsfeed from "@/components/newsfeed";
 
 export const logout = async () => {
   "use server";
@@ -21,6 +22,7 @@ export default async function Home() {
         <Header />
         <main>
           <PostForm />
+          <Newsfeed />
         </main>
       </div>
     </div>
