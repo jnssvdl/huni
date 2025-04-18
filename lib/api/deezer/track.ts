@@ -1,6 +1,6 @@
 import { Track } from "@/types/track";
 
-export const getTrack = async (id: string) => {
+export const getTrack = async (id: Track["id"]) => {
   const response = await fetch(`/api/deezer/track/${id}`);
 
   if (!response.ok) {

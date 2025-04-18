@@ -2,8 +2,8 @@
 
 import { Button } from "./ui/button";
 import TrackItem from "./track-item";
-import { getFeed, PAGE_SIZE } from "@/lib/api/feed";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { getFeed, PAGE_SIZE } from "@/lib/api/supabase";
 
 export default function Newsfeed() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
