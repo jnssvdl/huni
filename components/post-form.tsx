@@ -23,7 +23,7 @@ import TrackItem from "./track-item";
 import { Music } from "lucide-react";
 import { Track } from "@/types/track";
 import { createClient } from "@/utils/supabase/client";
-import { createPost } from "@/lib/api/supabase";
+import { createPost } from "@/data/create-post";
 
 export default function PostForm() {
   const queryClient = useQueryClient();
@@ -68,7 +68,7 @@ export default function PostForm() {
   };
 
   return (
-    <form className="flex flex-col gap-4 border-b p-4" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-2 border-b p-4" onSubmit={handleSubmit}>
       <Textarea
         // name="content"
         placeholder="Write your thoughts..."

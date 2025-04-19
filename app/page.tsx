@@ -1,16 +1,7 @@
 import { ModeToggle } from "@/components/mode-toggle";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import Header from "@/components/header";
 import PostForm from "@/components/post-form";
-import Newsfeed from "@/components/newsfeed";
-
-export const logout = async () => {
-  "use server";
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  return redirect("/login");
-};
+import Feed from "@/components/feed";
 
 export default async function Home() {
   return (
@@ -22,7 +13,7 @@ export default async function Home() {
         <Header />
         <main>
           <PostForm />
-          <Newsfeed />
+          <Feed />
         </main>
       </div>
     </div>

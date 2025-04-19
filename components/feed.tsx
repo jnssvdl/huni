@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "./ui/button";
-import TrackItem from "./track-item";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getFeed, PAGE_SIZE } from "@/lib/api/supabase";
+import { getFeed, PAGE_SIZE } from "@/data/get-feed";
+import PostItem from "./post-item";
 
-export default function Newsfeed() {
+export default function Feed() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["feed"],
@@ -19,12 +19,7 @@ export default function Newsfeed() {
 
   return (
     <div>
-      {data?.pages.flat().map((post) => (
-        <div key={post.id} className="border-b p-4">
-          <div>{post.profiles.username}</div>
-          <TrackItem track={post.track} />
-        </div>
-      ))}
+      {data?.pages.flat().map((post) => <PostItem key={post.id} post={post} />)}
       {isFetchingNextPage ? (
         <h1>Loading...</h1>
       ) : hasNextPage ? (
