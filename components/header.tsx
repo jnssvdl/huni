@@ -7,10 +7,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logout } from "@/app/page";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "./ui/avatar";
+
+const logout = async () => {
+  "use server";
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return redirect("/login");
+};
 
 export default async function Header() {
   const supabase = await createClient();

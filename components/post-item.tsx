@@ -28,7 +28,11 @@ export default function PostItem({ post }: { post: Post }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <LikeButton initialLikes={post.like_count} hasLiked={post.has_liked} />
+        <LikeButton
+          postId={post.post_id}
+          likes={post.like_count}
+          hasLiked={post.has_liked}
+        />
       </div>
     </div>
   );
