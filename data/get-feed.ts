@@ -1,16 +1,23 @@
 import { createClient } from "@/utils/supabase/client";
 import { getTrack } from "@/lib/api/deezer/track";
+import { User } from "@supabase/supabase-js";
 
 export const PAGE_SIZE = 2;
 
-export const getFeed = async ({ pageParam = 0 }) => {
+export const getFeed = async ({
+  userId,
+  offset,
+}: {
+  userId: User["id"];
+  offset: number;
+}) => {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*, profiles ( id, username, avatar_url ), likes( count )")
-    .order("created_at", { ascending: false })
-    .range(pageParam * PAGE_SIZE, (pageParam + 1) * PAGE_SIZE - 1);
+  const { data, error } = await supabase.rpc("get_global_feed", {
+    viewer_id: userId,
+    offset_count: offset,
+    limit_count: PAGE_SIZE,
+  });
 
   if (error) throw error;
 

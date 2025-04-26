@@ -9,12 +9,12 @@ export default function PostItem({ post }: { post: Post }) {
       <div className="flex items-center gap-2">
         <Avatar className="h-10 w-10">
           <AvatarImage
-            src={post.profiles.avatar_url || "/default_profile.png"}
-            alt={`${post.profiles.username} avatar`}
+            src={post.avatar_url || "/default_profile.png"}
+            alt={`${post.username} avatar`}
           />
         </Avatar>
         <div>
-          <h3 className="font-semibold">{post.profiles.username}</h3>
+          <h3 className="font-semibold">{post.username}</h3>
           <p className="text-muted-foreground text-sm">
             {new Date(post.created_at).toLocaleDateString()}
           </p>
@@ -28,7 +28,7 @@ export default function PostItem({ post }: { post: Post }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <LikeButton initialLikes={post.likes[0].count} />
+        <LikeButton initialLikes={post.like_count} hasLiked={post.has_liked} />
       </div>
     </div>
   );

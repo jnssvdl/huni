@@ -255,7 +255,20 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_global_feed: {
+        Args: { viewer_id: string; offset_count: number; limit_count: number };
+        Returns: {
+          post_id: string;
+          content: string;
+          created_at: string;
+          deezer_id: number;
+          username: string;
+          avatar_url: string;
+          like_count: number;
+          comment_count: number;
+          has_liked: boolean;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
