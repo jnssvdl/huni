@@ -5,16 +5,16 @@ import { User } from "@supabase/supabase-js";
 export const PAGE_SIZE = 2;
 
 export const getFeed = async ({
-  userId,
+  user_id,
   offset,
 }: {
-  userId: User["id"];
+  user_id: User["id"];
   offset: number;
 }) => {
   const supabase = createClient();
 
   const { data, error } = await supabase.rpc("get_global_feed", {
-    viewer_id: userId,
+    viewer_id: user_id,
     offset_count: offset,
     limit_count: PAGE_SIZE,
   });

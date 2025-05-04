@@ -5,17 +5,15 @@ import { createClient } from "@/utils/supabase/server";
 import { User } from "@supabase/supabase-js";
 
 export async function likePost({
-  userId,
-  postId,
+  user_id,
+  post_id,
 }: {
-  userId: User["id"];
-  postId: Post["post_id"];
+  user_id: User["id"];
+  post_id: Post["post_id"];
 }) {
   const supabase = await createClient();
 
-  const { error } = await supabase
-    .from("likes")
-    .insert({ user_id: userId, post_id: postId });
+  const { error } = await supabase.from("likes").insert({ user_id, post_id });
 
   if (error) throw error;
 }

@@ -1,6 +1,6 @@
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 import { Tables } from "@/types/database.types";
-import { getTrack } from "@/lib/api/deezer/track";
+import { Track } from "@/types/track";
 
 export const getPost = async ({
   post_id,
@@ -9,7 +9,7 @@ export const getPost = async ({
   post_id: Tables<"posts">["id"];
   username: Tables<"profiles">["username"];
 }) => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .rpc("get_post", {
@@ -20,7 +20,8 @@ export const getPost = async ({
 
   if (error) throw error;
 
-  const track = await getTrack(data.deezer_id);
+  const res = await fetch(`https://api.deezer.com/track/${data.deezer_id}`);
+  const track: Track = await res.json();
 
   const post = { ...data, track };
 
