@@ -2,6 +2,9 @@ import { Post } from "@/types/post";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import TrackItem from "./track-item";
 import LikeButton from "./like-button";
+import { Button } from "./ui/button";
+import { MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function PostItem({ post }: { post: Post }) {
   return (
@@ -30,9 +33,15 @@ export default function PostItem({ post }: { post: Post }) {
       <div className="flex items-center gap-2">
         <LikeButton
           postId={post.post_id}
-          likes={post.like_count}
+          likeCount={post.like_count}
           hasLiked={post.has_liked}
         />
+        <Link href={`/${post.username}/${post.post_id}`}>
+          <Button variant={"outline"} className="rounded-full">
+            <MessageCircle />
+            <span>{post.comment_count}</span>
+          </Button>
+        </Link>
       </div>
     </div>
   );

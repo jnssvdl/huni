@@ -10,13 +10,13 @@ import { unlikePost } from "@/data/unlike-post";
 
 type LikeButtonProps = {
   postId: Post["post_id"];
-  likes: number;
+  likeCount: number;
   hasLiked: boolean;
 };
 
 export default function LikeButton({
   postId,
-  likes,
+  likeCount,
   hasLiked,
 }: LikeButtonProps) {
   const queryClient = useQueryClient();
@@ -25,14 +25,14 @@ export default function LikeButton({
 
   const likeMutation = useMutation({
     mutationFn: likePost,
-    onMutate: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 
   const unlikeMutation = useMutation({
     mutationFn: unlikePost,
-    onMutate: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
@@ -48,7 +48,7 @@ export default function LikeButton({
   return (
     <Button variant={"outline"} className="rounded-full" onClick={toggleLike}>
       <Heart className={hasLiked ? `text-violet-500` : ""} />
-      <span>{likes}</span>
+      <span>{likeCount}</span>
     </Button>
   );
 }

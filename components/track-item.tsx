@@ -30,11 +30,11 @@ const TrackItem = ({ track }: TrackItemProps) => {
         className="rounded-full border p-2"
         variant={"outline"}
         size={"icon"}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          console.log(track.title);
-        }}
+        // onClick={(e) => {
+        //   e.stopPropagation();
+        //   e.preventDefault();
+        //   console.log(track.title);
+        // }}
       >
         <Play size={20} />
       </Button>
