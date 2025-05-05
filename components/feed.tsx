@@ -14,7 +14,7 @@ export default function Feed() {
       queryKey: ["feed"],
       queryFn: ({ pageParam }) =>
         getFeed({
-          userId: user.id,
+          user_id: user.id,
           offset: pageParam,
         }),
       getNextPageParam: (lastPage, allPages) => {
@@ -29,13 +29,19 @@ export default function Feed() {
       {data?.pages
         .flat()
         .map((post) => <PostItem key={post.post_id} post={post} />)}
-      {isFetchingNextPage ? (
-        <h1>Loading...</h1>
-      ) : hasNextPage ? (
-        <Button onClick={() => fetchNextPage()}>Load more</Button>
-      ) : (
-        <h1>You have reached the end</h1>
-      )}
+      <div className="flex justify-center border-b p-2">
+        {hasNextPage ? (
+          <Button
+            variant={"ghost"}
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            View more posts
+          </Button>
+        ) : (
+          <p>You have reached the end of the page</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -255,6 +255,20 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_comment_list: {
+        Args: {
+          target_post_id: string;
+          offset_count: number;
+          limit_count: number;
+        };
+        Returns: {
+          comment_id: string;
+          content: string;
+          created_at: string;
+          username: string;
+          avatar_url: string;
+        }[];
+      };
       get_global_feed: {
         Args: { viewer_id: string; offset_count: number; limit_count: number };
         Returns: {

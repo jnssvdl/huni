@@ -10,6 +10,7 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "./ui/avatar";
+import Link from "next/link";
 
 const logout = async () => {
   "use server";
@@ -41,7 +42,9 @@ export default async function Header() {
 
   return (
     <header className="flex items-center justify-between border-b p-4">
-      <h1 className="text-4xl font-bold">Huni</h1>
+      <Link href={"/"}>
+        <h1 className="text-2xl font-bold">Huni</h1>
+      </Link>
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>

@@ -17,8 +17,10 @@ export default function PostItem({ post }: { post: Post }) {
           />
         </Avatar>
         <div>
-          <h3 className="font-semibold">{post.username}</h3>
-          <p className="text-muted-foreground text-sm">
+          <Link href={`/users/${post.username}`}>
+            <h3 className="font-semibold hover:underline">{post.username}</h3>
+          </Link>
+          <p className="text-muted-foreground text-xs">
             {new Date(post.created_at).toLocaleDateString()}
           </p>
         </div>
@@ -32,11 +34,11 @@ export default function PostItem({ post }: { post: Post }) {
 
       <div className="flex items-center gap-2">
         <LikeButton
-          postId={post.post_id}
+          post_id={post.post_id}
           likeCount={post.like_count}
           hasLiked={post.has_liked}
         />
-        <Link href={`/${post.username}/${post.post_id}`}>
+        <Link href={`/users/${post.username}/posts/${post.post_id}`}>
           <Button variant={"outline"} className="rounded-full">
             <MessageCircle />
             <span>{post.comment_count}</span>

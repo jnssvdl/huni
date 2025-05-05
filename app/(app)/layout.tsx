@@ -26,7 +26,7 @@ export default async function AppLayout({
         <div className="fixed top-2 right-2">
           <ModeToggle />
         </div>
-        <div className="w-full max-w-xl border">
+        <div className="w-full max-w-xl border-x">
           <Header />
           <main>{children}</main>
         </div>

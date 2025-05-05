@@ -9,13 +9,13 @@ import { useUser } from "@/context/user-context";
 import { unlikePost } from "@/data/unlike-post";
 
 type LikeButtonProps = {
-  postId: Post["post_id"];
+  post_id: Post["post_id"];
   likeCount: number;
   hasLiked: boolean;
 };
 
 export default function LikeButton({
-  postId,
+  post_id,
   likeCount,
   hasLiked,
 }: LikeButtonProps) {
@@ -26,6 +26,7 @@ export default function LikeButton({
   const likeMutation = useMutation({
     mutationFn: likePost,
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["post", post_id] });
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
@@ -33,15 +34,16 @@ export default function LikeButton({
   const unlikeMutation = useMutation({
     mutationFn: unlikePost,
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["post", post_id] });
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 
   const toggleLike = () => {
     if (hasLiked) {
-      unlikeMutation.mutate({ postId: postId, userId: user.id });
+      unlikeMutation.mutate({ post_id: post_id, user_id: user.id });
     } else {
-      likeMutation.mutate({ postId: postId, userId: user.id });
+      likeMutation.mutate({ post_id: post_id, user_id: user.id });
     }
   };
 

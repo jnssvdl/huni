@@ -1,12 +1,14 @@
+"use server";
+
 import { Database } from "@/types/database.types";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 
 export const createPost = async ({
   user_id,
   content,
   deezer_id,
 }: Database["public"]["Tables"]["posts"]["Insert"]) => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("posts")
