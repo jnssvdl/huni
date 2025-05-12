@@ -21,7 +21,7 @@ export default function PostPage({ username, post_id }: PostPageProps) {
   if (!data) return;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full flex-col">
       <PostItem post={data} />
       <CommentList post_id={post_id} />
       <CommentForm post_id={post_id} />

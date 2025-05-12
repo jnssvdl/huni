@@ -24,23 +24,31 @@ export default function CommentList({ post_id }: CommentListProps) {
     });
 
   return (
-    <ul>
-      {data?.pages
-        .flat()
-        .map((comment) => (
-          <CommentItem key={comment.comment_id} comment={comment} />
-        ))}
-      {hasNextPage && (
-        <div className="flex justify-center border-b p-2">
-          <Button
-            variant={"ghost"}
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            aria-busy={isFetchingNextPage}
-          >
-            View more comments
-          </Button>
-        </div>
+    <ul className="flex-1">
+      {data?.pages.flat().length === 0 ? (
+        <li className="text-muted-foreground p-4 text-center">
+          No comments yet. Be the first to comment!
+        </li>
+      ) : (
+        <>
+          {data?.pages
+            .flat()
+            .map((comment) => (
+              <CommentItem key={comment.comment_id} comment={comment} />
+            ))}
+          {hasNextPage && (
+            <div className="flex justify-center border-b p-2">
+              <Button
+                variant={"ghost"}
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                aria-busy={isFetchingNextPage}
+              >
+                View more comments
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </ul>
   );

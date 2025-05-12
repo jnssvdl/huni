@@ -26,9 +26,9 @@ export default async function AppLayout({
         <div className="fixed top-2 right-2">
           <ModeToggle />
         </div>
-        <div className="w-full max-w-xl border-x">
+        <div className="flex w-full max-w-xl flex-col border-x">
           <Header />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
         </div>
       </div>
     </UserProvider>

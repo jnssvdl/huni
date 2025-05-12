@@ -70,7 +70,6 @@ export default function PostForm() {
   return (
     <form className="flex flex-col gap-2 border-b p-4" onSubmit={handleSubmit}>
       <Textarea
-        // name="content"
         placeholder="Write your thoughts..."
         className="resize-none"
         onChange={(e) => setContent(e.target.value)}
@@ -118,9 +117,8 @@ export default function PostForm() {
             </Command>
           </PopoverContent>
         </Popover>
-        {/* <input type="text" className="sr-only" name="deezer_id" required /> */}
         {track && (
-          <div className="flex-1 rounded-md border p-2">
+          <div className="min-w-0 flex-1 rounded-md border p-2">
             <TrackItem track={track} />
           </div>
         )}
