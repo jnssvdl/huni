@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { SendHorizonal } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createComment } from "@/data/create-comment";
+import { createComment } from "@/actions/create-comment";
 import { Post } from "@/types/post";
 
 type CommentFormProps = {

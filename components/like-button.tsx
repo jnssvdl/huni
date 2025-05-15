@@ -3,10 +3,10 @@
 import { Button } from "./ui/button";
 import { Heart } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { likePost } from "@/data/like-post";
+import { likePost } from "@/actions/like-post";
 import { Post } from "@/types/post";
 import { useUser } from "@/context/user-context";
-import { unlikePost } from "@/data/unlike-post";
+import { unlikePost } from "@/actions/unlike-post";
 
 type LikeButtonProps = {
   post_id: Post["post_id"];

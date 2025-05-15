@@ -4,7 +4,7 @@ import React, { useActionState, useState } from "react";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { createProfile } from "@/app/actions";
+import { createProfile } from "@/actions/create-profile";
 import { Upload } from "lucide-react";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Label } from "./ui/label";
@@ -26,7 +26,7 @@ export default function ProfileForm() {
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col items-center gap-4">
-        <Avatar className="h-36 w-36">
+        <Avatar className="h-32 w-32">
           <AvatarImage
             src={avatar || "/default_profile.png"}
             alt="Avatar preview"
@@ -34,9 +34,9 @@ export default function ProfileForm() {
           />
         </Avatar>
 
-        <Button variant="outline" className="max-w-40" asChild>
+        <Button variant="outline" asChild>
           <label htmlFor="avatar" className="cursor-pointer">
-            <Upload className="h-3.5 w-3.5" />
+            <Upload />
             <span>Upload avatar</span>
             <Input
               id="avatar"

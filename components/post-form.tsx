@@ -23,7 +23,7 @@ import TrackItem from "./track-item";
 import { Music } from "lucide-react";
 import { Track } from "@/types/track";
 import { createClient } from "@/utils/supabase/client";
-import { createPost } from "@/data/create-post";
+import { createPost } from "@/actions/create-post";
 
 export default function PostForm() {
   const queryClient = useQueryClient();

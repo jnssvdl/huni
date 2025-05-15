@@ -1,8 +1,16 @@
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import React from "react";
 import ProfileForm from "@/components/profile-form";
+import { LogOut } from "lucide-react";
 
 export const logout = async () => {
   "use server";
@@ -13,22 +21,29 @@ export const logout = async () => {
 
 export default function OnboardingPage() {
   return (
-    <div className="flex min-h-screen justify-center">
-      <div className="flex w-full max-w-xl flex-col gap-4 border p-4">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold">Hello there! 👋</h1>
-          <p className="text-muted-foreground">
-            Before we begin, add your avatar, username, and a short bio.
-          </p>
-        </div>
-
-        <ProfileForm />
-
-        <form action={logout} className="">
-          <Button type="submit" variant="destructive" className="w-full">
-            Log out
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="fixed top-2 right-2">
+        <form action={logout}>
+          <Button type="submit" variant="outline" size="icon">
+            <LogOut />
           </Button>
         </form>
+      </div>
+
+      <div className="w-full max-w-md">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center text-2xl font-bold">
+              Welcome to Huni
+            </CardTitle>
+            <CardDescription className="text-center">
+              Complete your profile to get started!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProfileForm />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

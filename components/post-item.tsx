@@ -27,7 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deletePost } from "@/data/delete-post";
+import { deletePost } from "@/actions/delete-post";
 
 export default function PostItem({ post }: { post: Post }) {
   const queryClient = useQueryClient();
