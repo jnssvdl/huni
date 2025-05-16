@@ -297,6 +297,20 @@ export type Database = {
           has_liked: boolean;
         }[];
       };
+      get_profile: {
+        Args: { target_username: string; viewer_id: string };
+        Returns: {
+          user_id: string;
+          username: string;
+          bio: string;
+          avatar_url: string;
+          created_at: string;
+          updated_at: string;
+          followers_count: number;
+          following_count: number;
+          has_followed: boolean;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
