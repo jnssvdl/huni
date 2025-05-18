@@ -48,7 +48,7 @@ export default function FollowButton({
       variant={hasFollowed ? "outline" : "default"}
       onClick={toggleFollow}
     >
-      {hasFollowed ? "Following" : "Follow"}
+      {hasFollowed ? "Unfollow" : "Follow"}
     </Button>
   );
 }

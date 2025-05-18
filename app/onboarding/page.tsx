@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import React from "react";
-import ProfileForm from "@/components/profile-form";
+// import ProfileForm from "@/components/profile-form";
 import { LogOut } from "lucide-react";
+import ProfileForm from "@/components/profile-form2";
 
 export const logout = async () => {
   "use server";
@@ -19,7 +19,17 @@ export const logout = async () => {
   return redirect("/login");
 };
 
-export default function OnboardingPage() {
+export default async function OnboardingPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="fixed top-2 right-2">
@@ -41,7 +51,7 @@ export default function OnboardingPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ProfileForm />
+            <ProfileForm user_id={user.id} />
           </CardContent>
         </Card>
       </div>
