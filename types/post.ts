@@ -3,6 +3,7 @@ import { Track } from "./track";
 export type Post = {
   track: Track;
   post_id: string;
+  user_id: string;
   content: string;
   created_at: string;
   deezer_id: number;
