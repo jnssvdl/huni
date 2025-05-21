@@ -263,6 +263,7 @@ export type Database = {
         };
         Returns: {
           comment_id: string;
+          user_id: string;
           content: string;
           created_at: string;
           username: string;
@@ -273,6 +274,7 @@ export type Database = {
         Args: { viewer_id: string; offset_count: number; limit_count: number };
         Returns: {
           post_id: string;
+          user_id: string;
           content: string;
           created_at: string;
           deezer_id: number;
@@ -287,6 +289,7 @@ export type Database = {
         Args: { target_post_id: string; viewer_username: string };
         Returns: {
           post_id: string;
+          user_id: string;
           content: string;
           created_at: string;
           deezer_id: number;
