@@ -1,11 +1,11 @@
 "use server";
 
-import { z } from "zod";
+import { Database } from "@/types/database.types";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { Profile } from "@/types/profile";
+import { z } from "zod";
 
-async function isTaken(username: Profile["username"]) {
+// Username availability check
+async function isTaken(username: string) {
   const supabase = await createClient();
 
   // Check if username already exists
@@ -15,10 +15,10 @@ async function isTaken(username: Profile["username"]) {
     .eq("username", username)
     .single();
 
-  return !data;
+  return !!data; // Returns true if username is taken
 }
 
-const schema = z.object({
+const profileSchema = z.object({
   username: z
     .string({
       invalid_type_error: "Invalid username",
@@ -29,7 +29,9 @@ const schema = z.object({
       /^[a-zA-Z0-9_]+$/,
       "Username can only contain letters, numbers, and underscores",
     )
-    .refine(isTaken, "Username already taken"),
+    .refine(async (username) => !(await isTaken(username)), {
+      message: "Username already taken",
+    }),
   bio: z
     .string({
       invalid_type_error: "Invalid bio",
@@ -37,70 +39,29 @@ const schema = z.object({
     .max(160, "Bio must be less than 160 characters")
     .optional()
     .nullable(),
-  avatar: z
-    .instanceof(File, {
-      message: "Invalid file",
-    })
-    .refine(
-      (file) =>
-        ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
-          file.type,
-        ),
-      "Only .jpg, .jpeg, .png and .webp formats are supported",
-    )
-    .refine(
-      (file) => file.size === 0 || file.size < 5 * 1024 * 1024,
-      "Avatar must be less than 5MB",
-    )
-    .optional(),
+  id: z.string(), // Assuming id is required
 });
 
-export async function createProfile(prevState: unknown, formData: FormData) {
-  const file = formData.get("avatar") as File;
-
-  const validatedFields = await schema.safeParseAsync({
-    username: formData.get("username"),
-    bio: formData.get("bio") || null,
-    avatar: file.size > 0 ? file : undefined,
-  });
-
-  // Return early if the form data is invalid
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
-  }
-
-  const { username, bio, avatar } = validatedFields.data;
-
+export async function createProfile(
+  profile: Database["public"]["Tables"]["profiles"]["Insert"],
+) {
   const supabase = await createClient();
 
-  // Get user data
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Validate the input data
+  const validatedProfile = await profileSchema.safeParseAsync(profile);
 
-  if (!user) {
-    redirect("/login");
+  if (!validatedProfile.success) {
+    // Convert Zod errors to a more friendly format if needed
+    const errors = validatedProfile.error.flatten();
+    throw new Error(JSON.stringify(errors));
   }
 
-  // Handle avatar upload
-  const profile = {
-    id: user.id,
-    username,
-    bio,
-    avatar_url: null as string | null,
-  };
+  // If validation passes, insert the profile
+  const { error } = await supabase
+    .from("profiles")
+    .insert(validatedProfile.data); // Use the validated data
 
-  if (avatar && avatar.size > 0) {
-    const path = `${user.id}/${Date.now()}`;
-    await supabase.storage.from("avatars").upload(path, avatar);
-    profile.avatar_url = supabase.storage
-      .from("avatars")
-      .getPublicUrl(path).data.publicUrl;
-  }
+  if (error) throw error;
 
-  // Insert profile data
-  await supabase.from("profiles").insert(profile);
-  redirect("/");
+  return { success: true };
 }
