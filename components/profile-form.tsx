@@ -1,90 +1,139 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import React from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "./ui/form";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { createProfile } from "@/actions/create-profile";
-import { Upload } from "lucide-react";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { Label } from "./ui/label";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateProfile } from "@/actions/update-profile";
+// import { createProfile } from "@/actions/create-profile2";
+import { User } from "@supabase/supabase-js";
 
-export default function ProfileForm() {
-  const [state, formAction, pending] = useActionState(createProfile, {
-    errors: {},
+export const formSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters." })
+    .max(30, { message: "Username must be at most 30 characters." }),
+  bio: z.string().max(160, { message: "Bio must be at most 160 characters." }),
+});
+
+type ProfileFormProps = {
+  user_id: User["id"];
+  initialValues?: z.infer<typeof formSchema>;
+  callback?: () => void;
+};
+
+export default function ProfileForm({
+  user_id,
+  initialValues,
+  callback,
+}: ProfileFormProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: initialValues?.username || "",
+      bio: initialValues?.bio || "",
+    },
   });
-  const [avatar, setAvatar] = useState<string | null>(null);
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setAvatar(imageUrl);
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
+
+  const updateMutation = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: (data) => {
+      if (data.username !== initialValues?.username) {
+        router.replace(`/u/${data.username}`);
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["profile", initialValues?.username],
+      });
+    },
+  });
+
+  // const createMutation = useMutation({
+  //   mutationFn: createProfile,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["profile", initialValues?.username],
+  //     });
+  //     router.replace("/");
+  //   },
+  // });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (initialValues) {
+      updateMutation.mutate({
+        user_id,
+        username: values.username,
+        bio: values.bio,
+      });
     }
+    // } else {
+    //   createMutation.mutate({
+    //     id: user_id,
+    //     username: values.username,
+    //     bio: values.bio,
+    //   });
+    // }
+
+    if (callback) callback();
   };
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
-      <div className="flex flex-col items-center gap-4">
-        <Avatar className="h-32 w-32">
-          <AvatarImage
-            src={avatar || "/default_profile.png"}
-            alt="Avatar preview"
-            className="object-cover"
-          />
-        </Avatar>
-
-        <Button variant="outline" asChild>
-          <label htmlFor="avatar" className="cursor-pointer">
-            <Upload />
-            <span>Upload avatar</span>
-            <Input
-              id="avatar"
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              name="avatar"
-              onChange={handleAvatarChange}
-            />
-          </label>
-        </Button>
-
-        {state?.errors.avatar && (
-          <p className="text-destructive">{state.errors.avatar[0]}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="username" className="text-sm">
-          Username
-        </Label>
-        <Input
-          id="username"
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-4"
+      >
+        <FormField
+          control={form.control}
           name="username"
-          type="username"
-          placeholder="Username"
-          min={3}
-          max={30}
-          required
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="E.g. jnssvdl" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {state?.errors.username && (
-          <p className="text-destructive text-sm">{state.errors.username[0]}</p>
-        )}
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="bio" className="text-sm">
-          Bio
-        </Label>
-        <Textarea id="bio" name="bio" placeholder="Bio" maxLength={160} />
-        {state?.errors.bio && (
-          <p className="text-destructive text-sm">{state.errors.bio[0]}</p>
-        )}
-      </div>
+        <FormField
+          control={form.control}
+          name="bio"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bio</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="E.g. Just out here sharing songs that slap."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <Button type="submit" disabled={pending} className="w-full">
-        Continue
-      </Button>
-    </form>
+        <Button type="submit" className="w-full">
+          Save
+        </Button>
+      </form>
+    </Form>
   );
 }
