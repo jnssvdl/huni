@@ -28,8 +28,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePost } from "@/actions/delete-post";
+import { User } from "@supabase/supabase-js";
 
-export default function PostItem({ post }: { post: Post }) {
+type PostItemProps = {
+  post: Post;
+  current_user_id: User["id"];
+};
+
+export default function PostItem({ post, current_user_id }: PostItemProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -37,6 +43,7 @@ export default function PostItem({ post }: { post: Post }) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["feed"] });
       queryClient.invalidateQueries({ queryKey: ["post", post.post_id] });
+      queryClient.invalidateQueries({ queryKey: ["user-feed", post.user_id] });
     },
   });
 
@@ -51,7 +58,7 @@ export default function PostItem({ post }: { post: Post }) {
             />
           </Avatar>
           <div>
-            <Link href={`/users/${post.username}`}>
+            <Link href={`/u/${post.username}`}>
               <h3 className="font-semibold hover:underline">{post.username}</h3>
             </Link>
             <p className="text-muted-foreground text-xs">
@@ -60,42 +67,46 @@ export default function PostItem({ post }: { post: Post }) {
           </div>
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size={"icon"} variant={"ghost"}>
-              <Ellipsis />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Options</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+        {post.user_id === current_user_id && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size={"icon"} variant={"ghost"}>
+                <Ellipsis />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Options</DropdownMenuLabel>
+              <DropdownMenuSeparator />
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  Delete
-                </DropdownMenuItem>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => mutation.mutate({ post_id: post.post_id })}
-                  >
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    Delete
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your account and remove your data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => mutation.mutate({ post_id: post.post_id })}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {post.content && <p className="text-base">{post.content}</p>}
@@ -110,7 +121,7 @@ export default function PostItem({ post }: { post: Post }) {
           likeCount={post.like_count}
           hasLiked={post.has_liked}
         />
-        <Link href={`/users/${post.username}/posts/${post.post_id}`}>
+        <Link href={`/u/${post.username}/p/${post.post_id}`}>
           <Button variant={"outline"} className="rounded-full">
             <MessageCircle />
             <span>{post.comment_count}</span>
