@@ -14,8 +14,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ProfileForm from "./profile-form2";
+import ProfileForm from "./profile-form";
 import { useState } from "react";
+import AvatarUpload from "./avatar-upload";
 
 type ProfileCardProps = {
   profile: Profile;
@@ -30,14 +31,22 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     <div className="flex flex-col gap-2 border-b p-4">
       <div className="flex items-start justify-between">
         {/* Avatar */}
-        <Avatar className="h-16 w-16">
-          <AvatarImage
-            src={profile.avatar_url || "/default_profile.png"}
-            alt={`${profile.username} avatar`}
-          />
-        </Avatar>
 
-        {/* Follow Button */}
+        {profile.user_id === id ? (
+          <AvatarUpload
+            avatar_url={profile.avatar_url}
+            user_id={profile.user_id}
+            username={profile.username}
+          />
+        ) : (
+          <Avatar className="h-24 w-24">
+            <AvatarImage
+              src={profile.avatar_url || "/default_profile.png"}
+              alt={`${profile.username} avatar`}
+            />
+          </Avatar>
+        )}
+
         {id === profile.user_id ? (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -47,10 +56,10 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogTitle>Edit Profile</DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
+                  Make changes to your profile here. Click save when you&apos;re
+                  done.
                 </DialogDescription>
                 <ProfileForm
                   user_id={id}

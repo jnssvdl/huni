@@ -1,53 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "./ui/button";
-import { Upload } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Input } from "./ui/input";
-import { useMutation } from "@tanstack/react-query";
-import { uploadAvatar } from "@/actions/upload-avatar";
-import { useUser } from "@/context/user-context";
 import { Avatar, AvatarImage } from "./ui/avatar";
+import { uploadAvatar } from "@/actions/upload-avatar";
+import { Profile } from "@/types/profile";
 
-export default function AvatarUpload() {
-  const mutation = useMutation({ mutationFn: uploadAvatar });
+type AvatarUploadProps = {
+  avatar_url: Profile["avatar_url"];
+  user_id: Profile["user_id"];
+  username: Profile["username"];
+};
 
-  const [avatar, setAvatar] = useState<string | null>(null);
+export default function AvatarUpload({
+  avatar_url,
+  user_id,
+  username,
+}: AvatarUploadProps) {
+  const queryClient = useQueryClient();
 
-  const user = useUser();
+  const mutation = useMutation({
+    mutationFn: uploadAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", username] });
+    },
+  });
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setAvatar(imageUrl);
-      mutation.mutate({ user_id: user.id, file: file });
+      mutation.mutate({ user_id, file });
     }
   };
 
   return (
     <div>
-      <Avatar className="h-32 w-32">
-        <AvatarImage
-          src={avatar || "/default_profile.png"}
-          alt="Avatar preview"
-          className="object-cover"
-        />
-      </Avatar>
-      <Button variant="outline" asChild>
-        <label htmlFor="avatar" className="cursor-pointer">
-          <Upload />
-          <span>Upload avatar</span>
-          <Input
-            id="avatar"
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            name="avatar"
-            onChange={handleAvatarChange}
+      <label htmlFor="avatar" className="cursor-pointer">
+        <Avatar className="h-24 w-24">
+          <AvatarImage
+            src={avatar_url || "/default_profile.png"}
+            alt="Avatar"
+            className="object-cover"
           />
-        </label>
-      </Button>
+        </Avatar>
+      </label>
+
+      <Input
+        id="avatar"
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        name="avatar"
+        onChange={handleAvatarChange}
+      />
     </div>
   );
 }
