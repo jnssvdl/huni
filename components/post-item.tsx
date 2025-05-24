@@ -29,6 +29,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePost } from "@/actions/delete-post";
 import { User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 type PostItemProps = {
   post: Post;
@@ -38,12 +40,20 @@ type PostItemProps = {
 export default function PostItem({ post, current_user_id }: PostItemProps) {
   const queryClient = useQueryClient();
 
+  const router = useRouter();
+
+  const pathname = usePathname();
+
   const mutation = useMutation({
     mutationFn: deletePost,
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feed"] });
       queryClient.invalidateQueries({ queryKey: ["post", post.post_id] });
       queryClient.invalidateQueries({ queryKey: ["user-feed", post.user_id] });
+
+      if (pathname === `/u/${post.username}/p/${post.post_id}`) {
+        router.push("/");
+      }
     },
   });
 

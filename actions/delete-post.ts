@@ -2,7 +2,6 @@
 
 import { Tables } from "@/types/database.types";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 export async function deletePost({
   post_id,
 }: {
@@ -13,6 +12,4 @@ export async function deletePost({
   const { error } = await supabase.from("posts").delete().eq("id", post_id);
 
   if (error) throw error;
-
-  redirect("/");
 }
