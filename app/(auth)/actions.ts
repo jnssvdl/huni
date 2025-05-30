@@ -32,14 +32,22 @@ export async function register(formData: FormData) {
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
+    username: formData.get("username") as string,
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  const { error } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+    options: { data: { username: data.username } },
+  });
 
   if (error) {
+    console.log(error.message);
     redirect("/error");
   }
 
   revalidatePath("/", "layout");
   redirect("/");
 }
+
+// TODO: handle username length in register server action, handle email confirmation, add input ui for username

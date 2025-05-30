@@ -27,6 +27,16 @@ export default function RegisterForm() {
           required
         />
       </div>
+      <div className="flex flex-col gap-1.5">
+        <Label className="text-sm">Username</Label>
+        <Input
+          id="username"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
       <Button formAction={register} className="w-full">
         Register
       </Button>
