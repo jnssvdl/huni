@@ -270,6 +270,21 @@ export type Database = {
           avatar_url: string
         }[]
       }
+      get_following_feed: {
+        Args: { viewer_id: string; offset_count: number; limit_count: number }
+        Returns: {
+          post_id: string
+          content: string
+          created_at: string
+          deezer_id: number
+          username: string
+          avatar_url: string
+          user_id: string
+          like_count: number
+          comment_count: number
+          has_liked: boolean
+        }[]
+      }
       get_global_feed: {
         Args: { viewer_id: string; offset_count: number; limit_count: number }
         Returns: {
