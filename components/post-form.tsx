@@ -30,7 +30,7 @@ export default function PostForm() {
   const { mutate, isPending } = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
     },
   });
 

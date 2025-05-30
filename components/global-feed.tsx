@@ -2,18 +2,18 @@
 
 import { Button } from "./ui/button";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getFeed, PAGE_SIZE } from "@/data/get-feed";
+import { getGlobalFeed, PAGE_SIZE } from "@/data/get-global-feed";
 import PostItem from "./post-item";
 import { useUser } from "@/context/user-context";
 
-export default function Feed() {
+export default function GlobalFeed() {
   const user = useUser();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["feed"],
+      queryKey: ["global-feed"],
       queryFn: ({ pageParam }) =>
-        getFeed({
+        getGlobalFeed({
           user_id: user.id,
           offset: pageParam,
         }),
@@ -28,7 +28,9 @@ export default function Feed() {
     <div>
       {data?.pages
         .flat()
-        .map((post) => <PostItem key={post.post_id} post={post} />)}
+        .map((post) => (
+          <PostItem key={post.post_id} post={post} current_user_id={user.id} />
+        ))}
       <div className="flex justify-center border-b p-2">
         {hasNextPage ? (
           <Button

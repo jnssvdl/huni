@@ -27,7 +27,7 @@ export default function LikeButton({
     mutationFn: likePost,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post_id] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
     },
   });
 
@@ -35,7 +35,7 @@ export default function LikeButton({
     mutationFn: unlikePost,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post_id] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
     },
   });
 

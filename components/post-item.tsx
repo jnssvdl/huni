@@ -47,7 +47,7 @@ export default function PostItem({ post, current_user_id }: PostItemProps) {
   const mutation = useMutation({
     mutationFn: deletePost,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
       queryClient.invalidateQueries({ queryKey: ["post", post.post_id] });
       queryClient.invalidateQueries({ queryKey: ["user-feed", post.user_id] });
 

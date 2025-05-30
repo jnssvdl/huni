@@ -1,11 +1,11 @@
 import PostForm from "@/components/post-form";
-import Feed from "@/components/feed";
+import GlobalFeed from "@/components/global-feed";
 
 export default async function Home() {
   return (
     <>
       <PostForm />
-      <Feed />
+      <GlobalFeed />
     </>
   );
 }
