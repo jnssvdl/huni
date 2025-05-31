@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Providers from "./providers";
+import { AudioProvider } from "@/context/audio-context";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <AudioProvider>{children}</AudioProvider>
           </ThemeProvider>
         </Providers>
       </body>

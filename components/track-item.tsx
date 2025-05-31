@@ -1,13 +1,33 @@
 import Image from "next/image";
-import { Play } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 import { Track } from "@/types/track";
 import { Button } from "./ui/button";
+import { useAudio } from "@/context/audio-context";
+import { useEffect } from "react";
 
-interface TrackItemProps {
-  track: Track;
-}
+export default function TrackItem({ track }: { track: Track }) {
+  const { play, pause, isPlaying, currentSrc } = useAudio();
 
-const TrackItem = ({ track }: TrackItemProps) => {
+  const isCurrentTrack = isPlaying && currentSrc === track.preview;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isCurrentTrack && isPlaying) {
+      pause();
+    } else {
+      play(track.preview);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      console.log("unmounted");
+      pause();
+    };
+  }, [pause]);
+
   return (
     <div className="flex w-full items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-2">
@@ -30,16 +50,10 @@ const TrackItem = ({ track }: TrackItemProps) => {
         className="rounded-full border p-2"
         variant={"outline"}
         size={"icon"}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          console.log(track.title);
-        }}
+        onClick={handleClick}
       >
-        <Play size={20} />
+        {isCurrentTrack ? <Pause /> : <Play size={20} />}
       </Button>
     </div>
   );
-};
-
-export default TrackItem;
+}
