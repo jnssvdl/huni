@@ -1,8 +1,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { getTrack } from "@/lib/api/deezer/track";
 import { User } from "@supabase/supabase-js";
-
-export const PAGE_SIZE = 2;
+import { FEED_LIMIT } from "@/constants";
 
 export const getUserFeed = async ({
   target_user_id,
@@ -19,7 +18,7 @@ export const getUserFeed = async ({
     target_user_id: target_user_id,
     viewer_id: user_id,
     offset_count: offset,
-    limit_count: PAGE_SIZE,
+    limit_count: FEED_LIMIT,
   });
 
   if (error) throw error;

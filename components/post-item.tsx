@@ -34,10 +34,10 @@ import { usePathname } from "next/navigation";
 
 type PostItemProps = {
   post: Post;
-  current_user_id: User["id"];
+  user_id: User["id"];
 };
 
-export default function PostItem({ post, current_user_id }: PostItemProps) {
+export default function PostItem({ post, user_id }: PostItemProps) {
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -77,7 +77,7 @@ export default function PostItem({ post, current_user_id }: PostItemProps) {
           </div>
         </div>
 
-        {post.user_id === current_user_id && (
+        {post.user_id === user_id && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size={"icon"} variant={"ghost"}>

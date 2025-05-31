@@ -2,9 +2,10 @@
 
 import { Button } from "./ui/button";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getCommentList, PAGE_SIZE } from "@/data/get-comment-list";
+import { getCommentList } from "@/data/get-comment-list";
 import { Post } from "@/types/post";
 import CommentItem from "./comment-item";
+import { COMMENT_LIST_LIMIT } from "@/constants";
 
 type CommentListProps = {
   post_id: Post["post_id"];
@@ -17,7 +18,7 @@ export default function CommentList({ post_id }: CommentListProps) {
       queryFn: ({ pageParam }) =>
         getCommentList({ post_id: post_id, offset: pageParam }),
       getNextPageParam: (lastPage, allPages) => {
-        if (lastPage.length < PAGE_SIZE) return undefined;
+        if (lastPage.length < COMMENT_LIST_LIMIT) return undefined;
         return allPages.flat().length;
       },
       initialPageParam: 0,

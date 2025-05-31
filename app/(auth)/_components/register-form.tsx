@@ -31,9 +31,9 @@ export default function RegisterForm() {
         <Label className="text-sm">Username</Label>
         <Input
           id="username"
-          name="password"
-          type="password"
-          placeholder="••••••••"
+          name="username"
+          type="text"
+          placeholder="E.g joe"
           required
         />
       </div>

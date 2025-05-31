@@ -26,7 +26,7 @@ export default function Page({
 
   return (
     <div className="flex h-full flex-col">
-      <PostItem post={data} current_user_id={id} />
+      <PostItem post={data} user_id={id} />
       <CommentList post_id={post_id} />
       <CommentForm post_id={post_id} />
     </div>

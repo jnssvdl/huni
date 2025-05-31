@@ -1,7 +1,6 @@
+import { COMMENT_LIST_LIMIT } from "@/constants";
 import { Post } from "@/types/post";
 import { createClient } from "@/utils/supabase/client";
-
-export const PAGE_SIZE = 2;
 
 export const getCommentList = async ({
   post_id,
@@ -15,7 +14,7 @@ export const getCommentList = async ({
   const { data, error } = await supabase.rpc("get_comment_list", {
     target_post_id: post_id,
     offset_count: offset,
-    limit_count: PAGE_SIZE,
+    limit_count: COMMENT_LIST_LIMIT,
   });
 
   if (error) throw error;

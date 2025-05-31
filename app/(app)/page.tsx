@@ -7,7 +7,7 @@ export default async function Home() {
   return (
     <>
       <PostForm />
-      <Tabs defaultValue="global-feed">
+      <Tabs defaultValue="following-feed">
         <div className="border-b px-4 py-2">
           <TabsList className="w-full">
             <TabsTrigger value="global-feed">Global</TabsTrigger>

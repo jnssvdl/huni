@@ -2,9 +2,10 @@
 
 import { Button } from "./ui/button";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getGlobalFeed, PAGE_SIZE } from "@/data/get-global-feed";
+import { getGlobalFeed } from "@/data/get-global-feed";
 import PostItem from "./post-item";
 import { useUser } from "@/context/user-context";
+import { FEED_LIMIT } from "@/constants";
 
 export default function GlobalFeed() {
   const user = useUser();
@@ -18,7 +19,7 @@ export default function GlobalFeed() {
           offset: pageParam,
         }),
       getNextPageParam: (lastPage, allPages) => {
-        if (lastPage.length < PAGE_SIZE) return undefined;
+        if (lastPage.length < FEED_LIMIT) return undefined;
         return allPages.flat().length;
       },
       initialPageParam: 0,
@@ -29,7 +30,7 @@ export default function GlobalFeed() {
       {data?.pages
         .flat()
         .map((post) => (
-          <PostItem key={post.post_id} post={post} current_user_id={user.id} />
+          <PostItem key={post.post_id} post={post} user_id={user.id} />
         ))}
       <div className="flex justify-center border-b p-2">
         {hasNextPage ? (

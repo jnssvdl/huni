@@ -2,11 +2,11 @@
 
 import { Button } from "./ui/button";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { PAGE_SIZE } from "@/data/get-global-feed";
 import PostItem from "./post-item";
 import { useUser } from "@/context/user-context";
 import { User } from "@supabase/supabase-js";
 import { getUserFeed } from "@/data/get-user-feed";
+import { FEED_LIMIT } from "@/constants";
 
 type UserFeedProps = {
   target_user_id: User["id"];
@@ -25,7 +25,7 @@ export default function UserFeed({ target_user_id }: UserFeedProps) {
           offset: pageParam,
         }),
       getNextPageParam: (lastPage, allPages) => {
-        if (lastPage.length < PAGE_SIZE) return undefined;
+        if (lastPage.length < FEED_LIMIT) return undefined;
         return allPages.flat().length;
       },
       initialPageParam: 0,
@@ -36,7 +36,7 @@ export default function UserFeed({ target_user_id }: UserFeedProps) {
       {data?.pages
         .flat()
         .map((post) => (
-          <PostItem key={post.post_id} post={post} current_user_id={user.id} />
+          <PostItem key={post.post_id} post={post} user_id={user.id} />
         ))}
       <div className="flex justify-center border-b p-2">
         {hasNextPage ? (
