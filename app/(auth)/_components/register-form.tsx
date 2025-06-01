@@ -15,23 +15,34 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters long.",
-  }),
+  email: z.string().email(),
+  password: z.string().min(8),
   username: z
     .string()
-    .min(3, {
-      message: "Username must be at least 3 characters long.",
-    })
+    .min(3)
+    .max(30)
     .regex(/^[a-zA-Z0-9_]+$/, {
-      message: "Username can only contain letters, numbers, and underscores.",
+      message: "Invalid username.",
     }),
 });
+
+export async function isTaken(username: string) {
+  const supabase = createClient();
+
+  // Check if username already exists
+  const { data } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("username", username)
+    .single();
+
+  return !!data; // Returns true if username is taken
+}
 
 export default function RegisterForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,7 +54,15 @@ export default function RegisterForm() {
     },
   });
 
-  const mutation = useMutation({ mutationFn: register });
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      toast("You're almost there!", {
+        description:
+          "A confirmation email is on its way. Hit the link inside to create your account.",
+      });
+    },
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
@@ -51,7 +70,7 @@ export default function RegisterForm() {
     formData.append("password", values.password);
     formData.append("username", values.username);
 
-    mutation.mutate(formData);
+    await mutation.mutateAsync(formData);
   }
 
   return (
@@ -98,7 +117,24 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Choose a username" {...field} />
+                <Input
+                  type="text"
+                  placeholder="Choose a username"
+                  {...field}
+                  onBlur={async (e) => {
+                    field.onBlur();
+                    const value = e.target.value;
+                    if (value.length >= 3) {
+                      const taken = await isTaken(value);
+                      if (taken) {
+                        form.setError("username", {
+                          type: "manual",
+                          message: "Username is already taken.",
+                        });
+                      }
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,7 +145,8 @@ export default function RegisterForm() {
           className="w-full"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? "Creating account..." : "Register"}
+          {form.formState.isSubmitting && <Loader2 className="animate-spin" />}
+          Register
         </Button>
       </form>
     </Form>

@@ -15,14 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required.",
-  }),
+  email: z.string().email(),
+  password: z.string().min(1),
 });
 
 export default function LoginForm() {
@@ -34,13 +32,26 @@ export default function LoginForm() {
     },
   });
 
-  const mutation = useMutation({ mutationFn: login });
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: (error) => {
+      if (error) {
+        console.log(error.message);
+        form.setError("root", {
+          message: error.message,
+        });
+      } else {
+        redirect("/");
+      }
+    },
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
     formData.append("email", values.email);
     formData.append("password", values.password);
-    mutation.mutate(formData);
+
+    await mutation.mutateAsync(formData);
   }
 
   return (
@@ -80,12 +91,20 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
+
+        {form.formState.errors.root?.message && (
+          <p className="text-destructive text-sm">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+
         <Button
           type="submit"
           className="w-full"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? "Logging in..." : "Log in"}
+          {form.formState.isSubmitting && <Loader2 className="animate-spin" />}
+          Log in
         </Button>
       </form>
     </Form>
