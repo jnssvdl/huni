@@ -6,7 +6,7 @@ export default function LoginPage() {
     <>
       <LoginForm />
 
-      <div className="mt-4 text-center">
+      <div className="mt-4 text-center text-sm">
         <span className="text-muted-foreground">
           Don&apos;t have an account?{" "}
         </span>
