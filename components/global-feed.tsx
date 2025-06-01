@@ -12,7 +12,7 @@ export default function GlobalFeed() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["global-feed"],
+      queryKey: ["feed", "global"],
       queryFn: ({ pageParam }) =>
         getGlobalFeed({
           user_id: user.id,
@@ -26,13 +26,13 @@ export default function GlobalFeed() {
     });
 
   return (
-    <div>
+    <>
       {data?.pages
         .flat()
         .map((post) => (
           <PostItem key={post.post_id} post={post} user_id={user.id} />
         ))}
-      <div className="flex justify-center border-b p-2">
+      <div className="border-b p-4 text-center">
         {hasNextPage ? (
           <Button
             variant={"ghost"}
@@ -45,6 +45,6 @@ export default function GlobalFeed() {
           <p>You have reached the end of the page</p>
         )}
       </div>
-    </div>
+    </>
   );
 }

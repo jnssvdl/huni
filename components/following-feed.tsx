@@ -12,7 +12,7 @@ export default function FollowingFeed() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["following-feed"],
+      queryKey: ["feed", "following"],
       queryFn: ({ pageParam }) =>
         getFollowingFeed({
           user_id: user.id,
@@ -26,7 +26,7 @@ export default function FollowingFeed() {
     });
 
   return (
-    <div>
+    <>
       {data?.pages
         .flat()
         .map((post) => (
@@ -45,6 +45,6 @@ export default function FollowingFeed() {
           <p>You have reached the end of the page</p>
         )}
       </div>
-    </div>
+    </>
   );
 }

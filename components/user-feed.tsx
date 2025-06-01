@@ -9,19 +9,19 @@ import { getUserFeed } from "@/data/get-user-feed";
 import { FEED_LIMIT } from "@/constants";
 
 type UserFeedProps = {
-  target_user_id: User["id"];
+  user_id: User["id"];
 };
 
-export default function UserFeed({ target_user_id }: UserFeedProps) {
+export default function UserFeed({ user_id }: UserFeedProps) {
   const user = useUser();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["user-feed", target_user_id],
+      queryKey: ["feed", "user", user_id],
       queryFn: ({ pageParam }) =>
         getUserFeed({
-          user_id: user.id,
-          target_user_id: target_user_id,
+          user_id: user_id,
+          viewer_id: user.id,
           offset: pageParam,
         }),
       getNextPageParam: (lastPage, allPages) => {
@@ -32,7 +32,7 @@ export default function UserFeed({ target_user_id }: UserFeedProps) {
     });
 
   return (
-    <div>
+    <>
       {data?.pages
         .flat()
         .map((post) => (
@@ -51,6 +51,6 @@ export default function UserFeed({ target_user_id }: UserFeedProps) {
           <p>You have reached the end of the page</p>
         )}
       </div>
-    </div>
+    </>
   );
 }
