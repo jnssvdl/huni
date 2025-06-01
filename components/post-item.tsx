@@ -5,7 +5,7 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 import TrackItem from "./track-item";
 import LikeButton from "./like-button";
 import { Button } from "./ui/button";
-import { Ellipsis, MessageCircle } from "lucide-react";
+import { Ellipsis, Loader2, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -31,6 +31,7 @@ import { deletePost } from "@/actions/delete-post";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
 
 type PostItemProps = {
   post: Post;
@@ -47,9 +48,8 @@ export default function PostItem({ post, user_id }: PostItemProps) {
   const mutation = useMutation({
     mutationFn: deletePost,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
       queryClient.invalidateQueries({ queryKey: ["post", post.post_id] });
-      queryClient.invalidateQueries({ queryKey: ["user-feed", post.user_id] });
 
       if (pathname === `/u/${post.username}/p/${post.post_id}`) {
         router.push("/");
@@ -58,21 +58,24 @@ export default function PostItem({ post, user_id }: PostItemProps) {
   });
 
   return (
-    <div className="flex flex-col gap-2 border-b p-4">
+    <div className="space-y-2 border-b p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Avatar className="h-10 w-10">
+          <Avatar className="size-10">
             <AvatarImage
               src={post.avatar_url || "/default_profile.png"}
               alt={`${post.username} avatar`}
+              className="object-cover"
             />
           </Avatar>
           <div>
             <Link href={`/u/${post.username}`}>
-              <h3 className="font-semibold hover:underline">{post.username}</h3>
+              <h3 className="font-bold hover:underline">{post.username}</h3>
             </Link>
-            <p className="text-muted-foreground text-xs">
-              {new Date(post.created_at).toLocaleDateString()}
+            <p className="text-muted-foreground text-sm">
+              {formatDistanceToNow(new Date(post.created_at), {
+                addSuffix: true,
+              })}
             </p>
           </div>
         </div>
@@ -84,7 +87,7 @@ export default function PostItem({ post, user_id }: PostItemProps) {
                 <Ellipsis />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent align="end">
               <DropdownMenuLabel>Options</DropdownMenuLabel>
               <DropdownMenuSeparator />
 
@@ -96,19 +99,23 @@ export default function PostItem({ post, user_id }: PostItemProps) {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete post?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      your account and remove your data from our servers.
+                      This will remove the post and its comments permanently.
+                      You can&apos;t undo this.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => mutation.mutate({ post_id: post.post_id })}
+                      onClick={async () =>
+                        await mutation.mutateAsync({ post_id: post.post_id })
+                      }
+                      disabled={mutation.isPending}
                     >
+                      {mutation.isPending && (
+                        <Loader2 className="animate-spin" />
+                      )}
                       Continue
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -125,7 +132,7 @@ export default function PostItem({ post, user_id }: PostItemProps) {
         <TrackItem track={post.track} />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="space-x-4">
         <LikeButton
           post_id={post.post_id}
           likeCount={post.like_count}
@@ -134,7 +141,13 @@ export default function PostItem({ post, user_id }: PostItemProps) {
         <Link href={`/u/${post.username}/p/${post.post_id}`}>
           <Button variant={"outline"} className="rounded-full">
             <MessageCircle />
-            <span>{post.comment_count}</span>
+            <span>
+              {new Intl.NumberFormat("en", {
+                notation: "compact",
+                compactDisplay: "short",
+                maximumFractionDigits: 1,
+              }).format(post.comment_count)}
+            </span>
           </Button>
         </Link>
       </div>
