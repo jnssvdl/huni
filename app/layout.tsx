@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Providers from "./providers";
 import { AudioProvider } from "@/context/audio-context";
+import { Toaster } from "@/components/ui/sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,7 +31,10 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <AudioProvider>{children}</AudioProvider>
+            <AudioProvider>
+              {children}
+              <Toaster />
+            </AudioProvider>
           </ThemeProvider>
         </Providers>
       </body>
