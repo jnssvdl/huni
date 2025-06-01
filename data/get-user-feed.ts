@@ -4,19 +4,19 @@ import { User } from "@supabase/supabase-js";
 import { FEED_LIMIT } from "@/constants";
 
 export const getUserFeed = async ({
-  target_user_id,
   user_id,
+  viewer_id,
   offset,
 }: {
-  target_user_id: User["id"];
   user_id: User["id"];
+  viewer_id: User["id"];
   offset: number;
 }) => {
   const supabase = createClient();
 
   const { data, error } = await supabase.rpc("get_user_feed", {
-    target_user_id: target_user_id,
-    viewer_id: user_id,
+    target_user_id: user_id,
+    viewer_id: viewer_id,
     offset_count: offset,
     limit_count: FEED_LIMIT,
   });
