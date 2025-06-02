@@ -23,7 +23,6 @@ export default function TrackItem({ track }: { track: Track }) {
 
   useEffect(() => {
     return () => {
-      console.log("unmounted");
       pause();
     };
   }, [pause]);
@@ -47,7 +46,7 @@ export default function TrackItem({ track }: { track: Track }) {
       </div>
 
       <Button
-        className="rounded-full border p-2"
+        className="rounded-full"
         variant={"outline"}
         size={"icon"}
         onClick={handleClick}
