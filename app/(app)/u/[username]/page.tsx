@@ -18,16 +18,15 @@ export default function ProfilePage({
 
   const { data: user } = useQuery({
     queryKey: ["profile", username],
-    queryFn: () =>
-      getProfile({ target_username: username, viewer_id: viewer_id }),
+    queryFn: () => getProfile({ username: username, viewer_id: viewer_id }),
   });
 
   if (!user) return;
 
   return (
-    <div>
+    <>
       <ProfileCard profile={user} />
-      <UserFeed target_user_id={user.user_id} />
-    </div>
+      <UserFeed user_id={user.user_id} />
+    </>
   );
 }
