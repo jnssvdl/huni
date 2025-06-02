@@ -3,32 +3,42 @@
 import CommentForm from "@/components/comment-form";
 import CommentList from "@/components/comment-list";
 import PostItem from "@/components/post-item";
+import PostSkeleton from "@/components/post-skeleton";
 import { useUser } from "@/context/user-context";
 import { getPost } from "@/data/get-post";
 import { useQuery } from "@tanstack/react-query";
-import { use } from "react";
+import { notFound, useParams } from "next/navigation";
 
-export default function Page({
-  params,
-}: {
-  params: Promise<{ username: string; post_id: string }>;
-}) {
-  const { username, post_id } = use(params);
+export default function Page() {
+  const params = useParams<{ username: string; post_id: string }>();
 
-  const { data } = useQuery({
+  const { username, post_id } = params;
+
+  const {
+    data: post,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["post", post_id],
     queryFn: () => getPost({ username, post_id }),
   });
 
   const { id } = useUser();
 
-  if (!data) return;
+  if (!isLoading && (!post || isError)) {
+    notFound();
+  }
 
   return (
-    <div className="flex h-full flex-col">
-      <PostItem post={data} user_id={id} />
-      <CommentList post_id={post_id} />
-      <CommentForm post_id={post_id} />
+    <div className="flex min-h-0 flex-1 flex-col">
+      {isLoading ? <PostSkeleton /> : <PostItem post={post!} user_id={id} />}
+
+      <div className="flex-1">
+        <CommentList post_id={post_id} />
+      </div>
+      <div className="bg-background sticky bottom-0">
+        <CommentForm post_id={post_id} />
+      </div>
     </div>
   );
 }
