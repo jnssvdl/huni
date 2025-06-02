@@ -7,17 +7,17 @@ export default async function Home() {
   return (
     <>
       <PostForm />
-      <Tabs defaultValue="following-feed">
-        <div className="border-b px-4 py-2">
+      <Tabs defaultValue="global">
+        <div className="border-b p-4">
           <TabsList className="w-full">
-            <TabsTrigger value="global-feed">Global</TabsTrigger>
-            <TabsTrigger value="following-feed">Following</TabsTrigger>
+            <TabsTrigger value="global">Global</TabsTrigger>
+            <TabsTrigger value="following">Following</TabsTrigger>
           </TabsList>
         </div>
-        <TabsContent value="global-feed">
+        <TabsContent value="global">
           <GlobalFeed />
         </TabsContent>
-        <TabsContent value="following-feed">
+        <TabsContent value="following">
           <FollowingFeed />
         </TabsContent>
       </Tabs>
