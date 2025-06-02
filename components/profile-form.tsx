@@ -18,14 +18,18 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfile } from "@/actions/update-profile";
-// import { createProfile } from "@/actions/create-profile2";
 import { User } from "@supabase/supabase-js";
+import { Loader2 } from "lucide-react";
+import { isTaken } from "@/app/(auth)/_components/register-form";
 
 export const formSchema = z.object({
   username: z
     .string()
     .min(3, { message: "Username must be at least 3 characters." })
-    .max(30, { message: "Username must be at most 30 characters." }),
+    .max(30, { message: "Username must be at most 30 characters." })
+    .regex(/^[a-zA-Z0-9_]+$/, {
+      message: "Invalid username.",
+    }),
   bio: z.string().max(160, { message: "Bio must be at most 160 characters." }),
 });
 
@@ -64,41 +68,21 @@ export default function ProfileForm({
     },
   });
 
-  // const createMutation = useMutation({
-  //   mutationFn: createProfile,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["profile", initialValues?.username],
-  //     });
-  //     router.replace("/");
-  //   },
-  // });
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (initialValues) {
-      updateMutation.mutate({
+      await updateMutation.mutateAsync({
         user_id,
         username: values.username,
         bio: values.bio,
       });
     }
-    // } else {
-    //   createMutation.mutate({
-    //     id: user_id,
-    //     username: values.username,
-    //     bio: values.bio,
-    //   });
-    // }
 
     if (callback) callback();
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="username"
@@ -106,7 +90,23 @@ export default function ProfileForm({
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="E.g. jnssvdl" {...field} />
+                <Input
+                  placeholder="Update your username"
+                  {...field}
+                  onBlur={async (e) => {
+                    field.onBlur();
+                    const value = e.target.value;
+                    if (value.length >= 3) {
+                      const taken = await isTaken(value);
+                      if (taken) {
+                        form.setError("username", {
+                          type: "manual",
+                          message: "Username is already taken.",
+                        });
+                      }
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,7 +121,7 @@ export default function ProfileForm({
               <FormLabel>Bio</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="E.g. Just out here sharing songs that slap."
+                  placeholder="Tell us a bit about yourself"
                   {...field}
                 />
               </FormControl>
@@ -131,6 +131,7 @@ export default function ProfileForm({
         />
 
         <Button type="submit" className="w-full">
+          {updateMutation.isPending && <Loader2 className="animate-spin" />}
           Save
         </Button>
       </form>
