@@ -20,17 +20,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import TrackItem from "./track-item";
-import { Music } from "lucide-react";
+import { Loader2, Music } from "lucide-react";
 import { Track } from "@/types/track";
-import { createClient } from "@/utils/supabase/client";
 import { createPost } from "@/actions/create-post";
+import { useUser } from "@/context/user-context";
 
 export default function PostForm() {
+  const user = useUser();
+
   const queryClient = useQueryClient();
+
   const { mutate, isPending } = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 
@@ -39,7 +42,11 @@ export default function PostForm() {
   const [content, setContent] = useState("");
   const [track, setTrack] = useState<Track>();
 
-  const { data: tracks, isLoading } = useQuery({
+  const {
+    data: tracks,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["search", query],
     queryFn: () => search(query),
     enabled: !!query,
@@ -47,14 +54,6 @@ export default function PostForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const supabase = createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) return;
     if (!track) return;
 
     mutate({
@@ -68,9 +67,13 @@ export default function PostForm() {
   };
 
   return (
-    <form className="flex flex-col gap-2 border-b p-4" onSubmit={handleSubmit}>
+    <form className="space-y-2 border-b p-4" onSubmit={handleSubmit}>
       <Textarea
-        placeholder="Write your thoughts..."
+        placeholder={
+          track
+            ? "What's this song making you feel?"
+            : "Choose a song and say something, or just let it speak."
+        }
         className="resize-none"
         onChange={(e) => setContent(e.target.value)}
         value={content}
@@ -88,19 +91,31 @@ export default function PostForm() {
               <Music />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="p-0">
+          <PopoverContent className="p-0" align="start">
             <Command shouldFilter={false}>
               <CommandInput
-                placeholder="Search tracks..."
+                placeholder="Got a song on your mind?"
                 value={query}
                 onValueChange={setQuery}
               />
               <CommandList>
-                {isLoading ? (
-                  <CommandEmpty>Loading...</CommandEmpty>
+                {!query ? (
+                  <CommandEmpty>Powered by Deezer</CommandEmpty>
+                ) : isLoading ? (
+                  <CommandEmpty>
+                    <div className="flex justify-center">
+                      <Loader2 className="animate-spin" />
+                    </div>
+                  </CommandEmpty>
+                ) : isError ? (
+                  <CommandEmpty>
+                    Something went wrong. Please try again.
+                  </CommandEmpty>
+                ) : !tracks || tracks.length === 0 ? (
+                  <CommandEmpty>No songs found for {query}</CommandEmpty>
                 ) : (
                   <CommandGroup>
-                    {tracks?.map((track) => (
+                    {tracks.map((track) => (
                       <CommandItem
                         key={track.id}
                         onSelect={() => {
@@ -124,7 +139,8 @@ export default function PostForm() {
         )}
       </div>
 
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending && <Loader2 className="animate-spin" />}
         Post
       </Button>
     </form>
