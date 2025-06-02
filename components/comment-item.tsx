@@ -7,7 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 export default function CommentItem({ comment }: { comment: Comment }) {
   return (
     <div className="space-y-2 border-b p-4">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <Avatar className="size-10">
           <AvatarImage
             src={comment.avatar_url || "/default_profile.png"}
@@ -16,7 +16,7 @@ export default function CommentItem({ comment }: { comment: Comment }) {
           />
         </Avatar>
         <div>
-          <Link href={`/users/${comment.username}`}>
+          <Link href={`/u/${comment.username}`}>
             <h2 className="font-bold hover:underline">{comment.username}</h2>
           </Link>
           <p className="text-muted-foreground text-sm">
