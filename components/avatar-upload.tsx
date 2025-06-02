@@ -34,12 +34,12 @@ export default function AvatarUpload({
   };
 
   return (
-    <div>
+    <>
       <label htmlFor="avatar" className="cursor-pointer">
-        <Avatar className="h-24 w-24">
+        <Avatar className="size-24">
           <AvatarImage
             src={avatar_url || "/default_profile.png"}
-            alt="Avatar"
+            alt={`${username} avatar`}
             className="object-cover"
           />
         </Avatar>
@@ -49,10 +49,10 @@ export default function AvatarUpload({
         id="avatar"
         type="file"
         accept="image/*"
-        className="sr-only"
+        className="hidden"
         name="avatar"
         onChange={handleAvatarChange}
       />
-    </div>
+    </>
   );
 }

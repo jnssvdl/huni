@@ -38,16 +38,13 @@ export default function CommentForm({ post_id }: CommentFormProps) {
   };
 
   return (
-    <form
-      className="bg-background sticky bottom-0 flex gap-2 border-t p-4"
-      onSubmit={handleSubmit}
-    >
+    <form className="flex gap-4 border-t p-4" onSubmit={handleSubmit}>
       <Input
         placeholder="Write your comment here..."
         onChange={(e) => setContent(e.target.value)}
       />
       <Button variant={"ghost"} size={"icon"}>
-        <SendHorizonal className="text-violet-500" />
+        <SendHorizonal />
       </Button>
     </form>
   );
