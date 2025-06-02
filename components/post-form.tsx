@@ -24,6 +24,7 @@ import { Loader2, Music } from "lucide-react";
 import { Track } from "@/types/track";
 import { createPost } from "@/actions/create-post";
 import { useUser } from "@/context/user-context";
+import useDebounce from "@/hooks/use-debounce";
 
 export default function PostForm() {
   const user = useUser();
@@ -42,14 +43,16 @@ export default function PostForm() {
   const [content, setContent] = useState("");
   const [track, setTrack] = useState<Track>();
 
+  const debouncedQuery = useDebounce(query, 500);
+
   const {
     data: tracks,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["search", query],
-    queryFn: () => search(query),
-    enabled: !!query,
+    queryKey: ["search", debouncedQuery],
+    queryFn: () => search(debouncedQuery),
+    enabled: debouncedQuery.length > 0,
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
