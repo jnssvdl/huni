@@ -22,13 +22,13 @@ export default async function AppLayout({
 
   return (
     <UserProvider user={user}>
-      <div className="flex min-h-screen justify-center">
+      <div className="flex min-h-screen flex-col">
         <div className="fixed top-2 right-2">
           <ModeToggle />
         </div>
-        <div className="flex w-full max-w-xl flex-col border-x">
-          <Header />
-          <main className="flex-1">{children}</main>
+        <div className="mx-auto flex w-full max-w-xl flex-1 flex-col border-x">
+          <Header user_id={user.id} />
+          <main className="flex min-h-0 flex-1 flex-col">{children}</main>
         </div>
       </div>
     </UserProvider>
