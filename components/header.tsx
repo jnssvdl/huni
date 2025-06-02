@@ -3,8 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/utils/supabase/server";
@@ -23,11 +21,15 @@ const logout = async () => {
 export default async function Header({ user_id }: { user_id: User["id"] }) {
   const supabase = await createClient();
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user_id)
     .single();
+
+  if (!profile || error) {
+    redirect("/login");
+  }
 
   return (
     <header className="flex items-center justify-between border-b p-4">
@@ -38,15 +40,16 @@ export default async function Header({ user_id }: { user_id: User["id"] }) {
         <DropdownMenuTrigger>
           <Avatar>
             <AvatarImage
-              src={profile?.avatar_url || "/default_profile.png"}
-              alt={`${profile?.username} avatar`}
+              src={profile.avatar_url || "/default_profile.png"}
+              alt={`${profile.username} avatar`}
               className="object-cover"
             />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{profile?.username}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href={`/u/${profile.username}`}>{profile.username}</Link>
+          </DropdownMenuItem>
           <form action={logout}>
             <DropdownMenuItem asChild>
               <button type="submit" className="w-full">
