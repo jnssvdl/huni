@@ -28,8 +28,8 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2 border-b p-4">
-      <div className="flex items-start justify-between">
+    <div className="space-y-2 border-b p-4">
+      <div className="flex justify-between">
         {/* Avatar */}
 
         {profile.user_id === id ? (
@@ -39,10 +39,11 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             username={profile.username}
           />
         ) : (
-          <Avatar className="h-24 w-24">
+          <Avatar className="size-24">
             <AvatarImage
               src={profile.avatar_url || "/default_profile.png"}
               alt={`${profile.username} avatar`}
+              className="object-cover"
             />
           </Avatar>
         )}
@@ -56,7 +57,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Edit Profile</DialogTitle>
+                <DialogTitle>Edit profile</DialogTitle>
                 <DialogDescription>
                   Make changes to your profile here. Click save when you&apos;re
                   done.
@@ -67,6 +68,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                     username: profile.username,
                     bio: profile.bio,
                   }}
+                  callback={() => setOpen(false)}
                 />
               </DialogHeader>
             </DialogContent>
@@ -82,20 +84,30 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       </div>
 
       {/* Username and Bio */}
-      <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-bold">@{profile.username}</h2>
+      <div>
+        <h2 className="font-bold">{profile.username}</h2>
         <p className="text-muted-foreground">
           {profile.bio ? profile.bio : "No bio available"}
         </p>
       </div>
 
       {/* Stats */}
-      <div className="flex gap-2">
+      <div className="space-x-2">
         <span className="text-muted-foreground">
-          {profile.following_count} Following
+          {new Intl.NumberFormat("en", {
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: 1,
+          }).format(profile.following_count)}{" "}
+          Following
         </span>
         <span className="text-muted-foreground">
-          {profile.followers_count} Followers
+          {new Intl.NumberFormat("en", {
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: 1,
+          }).format(profile.followers_count)}{" "}
+          Followers
         </span>
       </div>
     </div>

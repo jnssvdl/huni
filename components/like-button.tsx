@@ -27,7 +27,7 @@ export default function LikeButton({
     mutationFn: likePost,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post_id] });
-      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 
@@ -35,7 +35,7 @@ export default function LikeButton({
     mutationFn: unlikePost,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post_id] });
-      queryClient.invalidateQueries({ queryKey: ["global-feed"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 
@@ -50,7 +50,13 @@ export default function LikeButton({
   return (
     <Button variant={"outline"} className="rounded-full" onClick={toggleLike}>
       <Heart className={hasLiked ? `text-violet-500` : ""} />
-      <span>{likeCount}</span>
+      <span>
+        {new Intl.NumberFormat("en", {
+          notation: "compact",
+          compactDisplay: "short",
+          maximumFractionDigits: 1,
+        }).format(likeCount)}
+      </span>
     </Button>
   );
 }
