@@ -11,6 +11,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
+import { User } from "@supabase/supabase-js";
 
 const logout = async () => {
   "use server";
@@ -19,26 +20,14 @@ const logout = async () => {
   return redirect("/login");
 };
 
-export default async function Header() {
+export default async function Header({ user_id }: { user_id: User["id"] }) {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", user.id)
+    .eq("id", user_id)
     .single();
-
-  if (!profile) {
-    redirect("/onboarding");
-  }
 
   return (
     <header className="flex items-center justify-between border-b p-4">
@@ -49,17 +38,20 @@ export default async function Header() {
         <DropdownMenuTrigger>
           <Avatar>
             <AvatarImage
-              src={profile.avatar_url || "/default_profile.png"}
-              alt={`${profile.username} avatar`}
+              src={profile?.avatar_url || "/default_profile.png"}
+              alt={`${profile?.username} avatar`}
+              className="object-cover"
             />
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>{profile.username}</DropdownMenuLabel>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{profile?.username}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <form action={logout}>
-            <DropdownMenuItem>
-              <button type="submit">Log out</button>
+            <DropdownMenuItem asChild>
+              <button type="submit" className="w-full">
+                Log out
+              </button>
             </DropdownMenuItem>
           </form>
         </DropdownMenuContent>
