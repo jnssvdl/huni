@@ -8,7 +8,7 @@ export default async function Home() {
     <>
       <PostForm />
       <Tabs defaultValue="global">
-        <div className="border-b p-4">
+        <div className="bg-background sticky top-0 z-10 border-b p-4">
           <TabsList className="w-full">
             <TabsTrigger value="global">Global</TabsTrigger>
             <TabsTrigger value="following">Following</TabsTrigger>
