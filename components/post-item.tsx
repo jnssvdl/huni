@@ -5,7 +5,7 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 import TrackItem from "./track-item";
 import LikeButton from "./like-button";
 import { Button } from "./ui/button";
-import { Ellipsis, Loader2, MessageCircle } from "lucide-react";
+import { Ellipsis, MessageCircle, Trash2, Pencil } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -15,50 +15,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deletePost } from "@/actions/delete-post";
 import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import UpdateDialog from "./update-dialog";
+import DeleteDialog from "./delete-dialog";
 
 type PostItemProps = {
   post: Post;
   user_id: User["id"];
+  innerRef?: React.Ref<HTMLDivElement>;
 };
 
-export default function PostItem({ post, user_id }: PostItemProps) {
-  const queryClient = useQueryClient();
-
-  const router = useRouter();
-
-  const pathname = usePathname();
-
-  const mutation = useMutation({
-    mutationFn: deletePost,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
-      queryClient.invalidateQueries({ queryKey: ["post", post.post_id] });
-
-      if (pathname === `/u/${post.username}/p/${post.post_id}`) {
-        router.push("/");
-      }
-    },
+export default function PostItem({ post, user_id, innerRef }: PostItemProps) {
+  const [open, setOpen] = useState({
+    updateDialog: false,
+    deleteDialog: false,
   });
 
   return (
-    <div className="space-y-2 border-b p-4">
+    <div className="space-y-2 border-b p-4" ref={innerRef}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Avatar className="size-10">
@@ -81,7 +57,7 @@ export default function PostItem({ post, user_id }: PostItemProps) {
         </div>
 
         {post.user_id === user_id && (
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button size={"icon"} variant={"ghost"}>
                 <Ellipsis />
@@ -91,36 +67,23 @@ export default function PostItem({ post, user_id }: PostItemProps) {
               <DropdownMenuLabel>Options</DropdownMenuLabel>
               <DropdownMenuSeparator />
 
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    Delete
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete post?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will remove the post and its comments permanently.
-                      You can&apos;t undo this.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={async () =>
-                        await mutation.mutateAsync({ post_id: post.post_id })
-                      }
-                      disabled={mutation.isPending}
-                    >
-                      {mutation.isPending && (
-                        <Loader2 className="animate-spin" />
-                      )}
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <DropdownMenuItem
+                onClick={() =>
+                  setOpen((prev) => ({ ...prev, updateDialog: true }))
+                }
+              >
+                <Pencil />
+                <span>Update</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() =>
+                  setOpen((prev) => ({ ...prev, deleteDialog: true }))
+                }
+              >
+                <Trash2 />
+                <span>Delete</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -151,6 +114,22 @@ export default function PostItem({ post, user_id }: PostItemProps) {
           </Button>
         </Link>
       </div>
+
+      <UpdateDialog
+        open={open.updateDialog}
+        onOpenChange={(open) =>
+          setOpen((prev) => ({ ...prev, updateDialog: open }))
+        }
+        post={post}
+      />
+
+      <DeleteDialog
+        open={open.deleteDialog}
+        onOpenChange={(open) =>
+          setOpen((prev) => ({ ...prev, deleteDialog: open }))
+        }
+        post={post}
+      />
     </div>
   );
 }
