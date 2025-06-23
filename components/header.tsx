@@ -10,6 +10,8 @@ import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
+import UserCombobox from "./user-combobox";
+import { ModeButton } from "./mode-button";
 
 const logout = async () => {
   "use server";
@@ -36,29 +38,33 @@ export default async function Header({ user_id }: { user_id: User["id"] }) {
       <Link href={"/"}>
         <h1 className="text-2xl font-bold">Huni</h1>
       </Link>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar>
-            <AvatarImage
-              src={profile.avatar_url || "/default_profile.png"}
-              alt={`${profile.username} avatar`}
-              className="object-cover"
-            />
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link href={`/u/${profile.username}`}>{profile.username}</Link>
-          </DropdownMenuItem>
-          <form action={logout}>
+      <div className="flex items-center space-x-4">
+        <UserCombobox />
+        <ModeButton />
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Avatar>
+              <AvatarImage
+                src={profile.avatar_url || "/default_profile.png"}
+                alt={`${profile.username} avatar`}
+                className="object-cover"
+              />
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <button type="submit" className="w-full">
-                Log out
-              </button>
+              <Link href={`/u/${profile.username}`}>{profile.username}</Link>
             </DropdownMenuItem>
-          </form>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <form action={logout}>
+              <DropdownMenuItem asChild>
+                <button type="submit" className="w-full">
+                  Log out
+                </button>
+              </DropdownMenuItem>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }
