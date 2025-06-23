@@ -16,19 +16,22 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserList } from "@/data/get-user-list";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
+import useDebounce from "@/hooks/use-debounce";
 
 export default function UserCombobox() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+
+  const debouncedQuery = useDebounce(query, 500);
 
   const {
     data: users,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["users", query],
-    queryFn: () => getUserList(query),
-    enabled: !!query,
+    queryKey: ["users", debouncedQuery],
+    queryFn: () => getUserList(debouncedQuery),
+    enabled: debouncedQuery.length > 0,
   });
 
   return (
