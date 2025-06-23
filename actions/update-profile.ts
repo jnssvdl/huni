@@ -15,6 +15,16 @@ export async function updateProfile({
 }) {
   const supabase = await createClient();
 
+  const { data: user } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", username)
+    .maybeSingle();
+
+  if (user) {
+    throw new Error("Username is already taken.");
+  }
+
   const { data, error } = await supabase
     .from("profiles")
     .update({ username, bio })

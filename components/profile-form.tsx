@@ -20,7 +20,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfile } from "@/actions/update-profile";
 import { User } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
-import { isTaken } from "@/app/(auth)/_components/register-form";
+import { toast } from "sonner";
 
 export const formSchema = z.object({
   username: z
@@ -66,6 +66,21 @@ export default function ProfileForm({
         queryKey: ["profile", initialValues?.username],
       });
     },
+    onError: (err) => {
+      if (
+        err instanceof Error &&
+        err.message === "Username is already taken."
+      ) {
+        form.setError("username", {
+          type: "manual",
+          message: err.message,
+        });
+      } else {
+        toast("Something went wrong", {
+          description: err instanceof Error ? err.message : "Please try again.",
+        });
+      }
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -90,23 +105,7 @@ export default function ProfileForm({
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Update your username"
-                  {...field}
-                  onBlur={async (e) => {
-                    field.onBlur();
-                    const value = e.target.value;
-                    if (value.length >= 3) {
-                      const taken = await isTaken(value);
-                      if (taken) {
-                        form.setError("username", {
-                          type: "manual",
-                          message: "Username is already taken.",
-                        });
-                      }
-                    }
-                  }}
-                />
+                <Input placeholder="Update your username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
