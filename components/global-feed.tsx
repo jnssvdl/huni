@@ -88,7 +88,7 @@ export default function GlobalFeed() {
           <PostSkeleton key={i} />
         ))}
 
-      <div className="flex justify-center border-b p-4">
+      <div className="flex justify-center p-4">
         <p className="text-muted-foreground text-sm">
           You have reached the end of the feed.
         </p>

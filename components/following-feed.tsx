@@ -8,6 +8,8 @@ import { useUser } from "@/context/user-context";
 import { FEED_LIMIT } from "@/constants";
 import PostSkeleton from "./post-skeleton";
 import { RotateCcw } from "lucide-react";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 export default function FollowingFeed() {
   const user = useUser();
@@ -34,10 +36,17 @@ export default function FollowingFeed() {
     initialPageParam: 0,
   });
 
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
   const posts = data?.pages.flat() || [];
 
   if (isLoading) {
-    // Show skeletons while first page is loading
     return (
       <>
         {Array.from({ length: FEED_LIMIT }).map((_, i) => (
@@ -60,9 +69,18 @@ export default function FollowingFeed() {
 
   return (
     <>
-      {posts.map((post) => (
-        <PostItem key={post.post_id} post={post} user_id={user.id} />
-      ))}
+      {posts.map((post, index) =>
+        posts.length === index + 1 ? (
+          <PostItem
+            key={post.post_id}
+            post={post}
+            user_id={user.id}
+            innerRef={ref}
+          />
+        ) : (
+          <PostItem key={post.post_id} post={post} user_id={user.id} />
+        ),
+      )}
 
       {/* Show additional skeleton when fetching next page */}
       {isFetchingNextPage &&
@@ -70,20 +88,10 @@ export default function FollowingFeed() {
           <PostSkeleton key={i} />
         ))}
 
-      <div className="flex justify-center border-b p-4">
-        {hasNextPage ? (
-          <Button
-            variant={"ghost"}
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-          >
-            View more posts
-          </Button>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            You have reached the end of the page.
-          </p>
-        )}
+      <div className="flex justify-center p-4">
+        <p className="text-muted-foreground text-sm">
+          You have reached the end of the feed.
+        </p>
       </div>
     </>
   );
