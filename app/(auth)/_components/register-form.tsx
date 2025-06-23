@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
-import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -30,19 +29,6 @@ const formSchema = z.object({
       message: "Invalid username.",
     }),
 });
-
-export async function isTaken(username: string) {
-  const supabase = createClient();
-
-  // Check if username already exists
-  const { data } = await supabase
-    .from("profiles")
-    .select("username")
-    .eq("username", username)
-    .single();
-
-  return !!data; // Returns true if username is taken
-}
 
 export default function RegisterForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -61,6 +47,21 @@ export default function RegisterForm() {
         description:
           "A confirmation email is on its way. Hit the link inside to create your account.",
       });
+    },
+    onError: (err) => {
+      if (
+        err instanceof Error &&
+        err.message === "Username is already taken."
+      ) {
+        form.setError("username", {
+          type: "manual",
+          message: err.message,
+        });
+      } else {
+        toast("Something went wrong", {
+          description: err instanceof Error ? err.message : "Please try again.",
+        });
+      }
     },
   });
 
@@ -117,24 +118,7 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Choose a username"
-                  {...field}
-                  onBlur={async (e) => {
-                    field.onBlur();
-                    const value = e.target.value;
-                    if (value.length >= 3) {
-                      const taken = await isTaken(value);
-                      if (taken) {
-                        form.setError("username", {
-                          type: "manual",
-                          message: "Username is already taken.",
-                        });
-                      }
-                    }
-                  }}
-                />
+                <Input type="text" placeholder="Choose a username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

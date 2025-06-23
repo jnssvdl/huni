@@ -18,17 +18,30 @@ export async function login(formData: FormData) {
 export async function register(formData: FormData) {
   const supabase = await createClient();
 
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    username: formData.get("username") as string,
-  };
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const username = formData.get("username") as string;
+
+  // Check if username already exists
+  const { data: user } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", username)
+    .maybeSingle();
+
+  if (user) {
+    throw new Error("Username is already taken.");
+  }
 
   const { error } = await supabase.auth.signUp({
-    email: data.email,
-    password: data.password,
-    options: { data: { username: data.username } },
+    email,
+    password,
+    options: {
+      data: { username },
+    },
   });
 
-  return error;
+  if (error) throw error;
+
+  return null;
 }
