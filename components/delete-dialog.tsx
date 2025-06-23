@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePost } from "@/actions/delete-post";
 import { usePathname, useRouter } from "next/navigation";
 import { Post } from "@/types/post";
+import { Button } from "./ui/button";
 
 type DeleteDialogProps = {
   open: boolean;
@@ -53,14 +54,17 @@ export default function DeleteDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () =>
-              await mutation.mutateAsync({ post_id: post.post_id })
-            }
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending && <Loader2 className="animate-spin" />}
-            Continue
+          <AlertDialogAction asChild>
+            <Button
+              onClick={async () =>
+                await mutation.mutateAsync({ post_id: post.post_id })
+              }
+              disabled={mutation.isPending}
+              variant={"destructive"}
+            >
+              {mutation.isPending && <Loader2 className="animate-spin" />}
+              Continue
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
