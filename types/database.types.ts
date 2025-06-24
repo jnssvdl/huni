@@ -301,7 +301,9 @@ export type Database = {
         }[]
       }
       get_post: {
-        Args: { target_post_id: string; viewer_username: string }
+        Args:
+          | { target_post_id: string; viewer_id: string }
+          | { target_post_id: string; viewer_username: string }
         Returns: {
           post_id: string
           user_id: string
