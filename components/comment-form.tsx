@@ -42,6 +42,7 @@ export default function CommentForm({ post_id }: CommentFormProps) {
       <Input
         placeholder="Write your comment here..."
         onChange={(e) => setContent(e.target.value)}
+        value={content}
       />
       <Button variant={"ghost"} size={"icon"}>
         <SendHorizonal />
