@@ -67,6 +67,16 @@ export default function GlobalFeed() {
     );
   }
 
+  if (posts.length === 0) {
+    return (
+      <div className="flex justify-center p-4">
+        <p className="text-muted-foreground text-sm">
+          No one have posted on Huni yet :(
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       {posts.map((post, index) =>

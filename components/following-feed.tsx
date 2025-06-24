@@ -67,6 +67,16 @@ export default function FollowingFeed() {
     );
   }
 
+  if (posts.length === 0) {
+    return (
+      <div className="flex justify-center p-4">
+        <p className="text-muted-foreground text-sm">
+          Follow some friends to see their posts here.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       {posts.map((post, index) =>

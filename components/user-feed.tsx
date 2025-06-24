@@ -64,6 +64,18 @@ export default function UserFeed({ user_id }: UserFeedProps) {
     );
   }
 
+  if (posts.length === 0) {
+    return (
+      <div className="flex justify-center p-4">
+        <p className="text-muted-foreground text-sm">
+          {user_id === user.id
+            ? "Your feed is looking a little empty."
+            : "Looks like they haven’t posted yet."}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       {posts.map((post) => (
