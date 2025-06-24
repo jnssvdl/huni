@@ -1,5 +1,4 @@
 import Header from "@/components/header";
-import { ModeToggle } from "@/components/mode-toggle";
 import { UserProvider } from "@/context/user-context";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -23,9 +22,6 @@ export default async function AppLayout({
   return (
     <UserProvider user={user}>
       <div className="flex min-h-screen flex-col">
-        <div className="fixed top-2 right-2">
-          <ModeToggle />
-        </div>
         <div className="mx-auto flex w-full max-w-xl flex-1 flex-col border-x">
           <Header user_id={user.id} />
           <main className="flex min-h-0 flex-1 flex-col">{children}</main>
