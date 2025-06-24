@@ -12,7 +12,8 @@ import { notFound, useParams } from "next/navigation";
 export default function Page() {
   const params = useParams<{ username: string; post_id: string }>();
 
-  const { username, post_id } = params;
+  const { post_id } = params;
+  const { id } = useUser();
 
   const {
     data: post,
@@ -20,10 +21,8 @@ export default function Page() {
     isError,
   } = useQuery({
     queryKey: ["post", post_id],
-    queryFn: () => getPost({ username, post_id }),
+    queryFn: () => getPost({ user_id: id, post_id }),
   });
-
-  const { id } = useUser();
 
   if (!isLoading && (!post || isError)) {
     notFound();
