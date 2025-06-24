@@ -85,14 +85,14 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
       {/* Username and Bio */}
       <div>
-        <h2 className="font-bold">{profile.username}</h2>
+        <h2 className="text-xl font-bold">{profile.username}</h2>
         <p className="text-muted-foreground">
           {profile.bio ? profile.bio : "No bio available"}
         </p>
       </div>
 
       {/* Stats */}
-      <div className="space-x-2">
+      <div className="space-x-2 text-sm">
         <span className="text-muted-foreground">
           {new Intl.NumberFormat("en", {
             notation: "compact",
