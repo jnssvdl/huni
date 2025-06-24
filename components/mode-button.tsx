@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Laptop } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
@@ -17,16 +17,20 @@ export function ModeButton() {
     return null;
   }
 
-  const handleToggle = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+  const toggleTheme = () => {
+    setTheme(
+      theme === "light" ? "dark" : theme === "dark" ? "system" : "light",
+    );
   };
 
   return (
-    <Button variant="ghost" size="icon" onClick={handleToggle}>
-      {theme === "dark" ? (
-        <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all" />
+    <Button variant="ghost" size="icon" onClick={toggleTheme}>
+      {theme === "light" ? (
+        <Moon className="h-[1.2rem] w-[1.2rem]" />
+      ) : theme === "dark" ? (
+        <Sun className="h-[1.2rem] w-[1.2rem]" />
       ) : (
-        <Moon className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all" />
+        <Laptop className="h-[1.2rem] w-[1.2rem]" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
