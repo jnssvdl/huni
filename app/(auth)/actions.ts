@@ -1,16 +1,24 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { loginSchema, registerSchema } from "./validators";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
 
   const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
+    email: formData.get("email"),
+    password: formData.get("password"),
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const result = loginSchema.safeParse(data);
+  if (!result.success) {
+    throw new Error("Invalid credentials.");
+  }
+
+  const { email, password } = result.data;
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   return error;
 }
@@ -18,9 +26,18 @@ export async function login(formData: FormData) {
 export async function register(formData: FormData) {
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const username = formData.get("username") as string;
+  const data = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+    username: formData.get("username"),
+  };
+
+  const result = registerSchema.safeParse(data);
+  if (!result.success) {
+    throw new Error("Invalid credentials.");
+  }
+
+  const { email, password, username } = result.data;
 
   // Check if username already exists
   const { data: user } = await supabase

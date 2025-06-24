@@ -17,22 +17,11 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  username: z
-    .string()
-    .min(3)
-    .max(30)
-    .regex(/^[a-zA-Z0-9_]+$/, {
-      message: "Invalid username.",
-    }),
-});
+import { registerSchema } from "../validators";
 
 export default function RegisterForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -65,7 +54,7 @@ export default function RegisterForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
     const formData = new FormData();
     formData.append("email", values.email);
     formData.append("password", values.password);

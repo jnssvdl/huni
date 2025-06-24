@@ -17,15 +17,11 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
-
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-});
+import { loginSchema } from "../validators";
 
 export default function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -46,7 +42,7 @@ export default function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
     const formData = new FormData();
     formData.append("email", values.email);
     formData.append("password", values.password);
