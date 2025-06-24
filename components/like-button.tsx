@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Heart } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePost } from "@/actions/like-post";
+import { unlikePost } from "@/actions/unlike-post";
 import { Post } from "@/types/post";
 import { useUser } from "@/context/user-context";
-import { unlikePost } from "@/actions/unlike-post";
 
 type LikeButtonProps = {
   post_id: Post["post_id"];
@@ -20,14 +21,24 @@ export default function LikeButton({
   hasLiked,
 }: LikeButtonProps) {
   const queryClient = useQueryClient();
-
   const user = useUser();
+
+  const [optimisticLikeState, setOptimisticLikeState] = useState({
+    hasLiked,
+    likeCount,
+  });
 
   const likeMutation = useMutation({
     mutationFn: likePost,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post_id] });
       queryClient.invalidateQueries({ queryKey: ["feed"] });
+    },
+    onError: () => {
+      setOptimisticLikeState({
+        hasLiked: false,
+        likeCount,
+      });
     },
   });
 
@@ -37,25 +48,39 @@ export default function LikeButton({
       queryClient.invalidateQueries({ queryKey: ["post", post_id] });
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
+    onError: () => {
+      setOptimisticLikeState({
+        hasLiked: true,
+        likeCount,
+      });
+    },
   });
 
   const toggleLike = () => {
-    if (hasLiked) {
-      unlikeMutation.mutate({ post_id: post_id, user_id: user.id });
+    if (optimisticLikeState.hasLiked) {
+      setOptimisticLikeState((prev) => ({
+        hasLiked: false,
+        likeCount: prev.likeCount - 1,
+      }));
+      unlikeMutation.mutate({ post_id, user_id: user.id });
     } else {
-      likeMutation.mutate({ post_id: post_id, user_id: user.id });
+      setOptimisticLikeState((prev) => ({
+        hasLiked: true,
+        likeCount: prev.likeCount + 1,
+      }));
+      likeMutation.mutate({ post_id, user_id: user.id });
     }
   };
 
   return (
-    <Button variant={"outline"} className="rounded-full" onClick={toggleLike}>
-      <Heart className={hasLiked ? `text-violet-500` : ""} />
+    <Button variant="outline" className="rounded-full" onClick={toggleLike}>
+      <Heart className={optimisticLikeState.hasLiked ? "text-primary" : ""} />
       <span>
         {new Intl.NumberFormat("en", {
           notation: "compact",
           compactDisplay: "short",
           maximumFractionDigits: 1,
-        }).format(likeCount)}
+        }).format(optimisticLikeState.likeCount)}
       </span>
     </Button>
   );
