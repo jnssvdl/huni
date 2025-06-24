@@ -2,7 +2,7 @@ import { Comment } from "@/types/comment";
 import React from "react";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgo } from "@/lib/time-ago";
 
 export default function CommentItem({ comment }: { comment: Comment }) {
   return (
@@ -20,9 +20,7 @@ export default function CommentItem({ comment }: { comment: Comment }) {
             <h2 className="font-bold hover:underline">{comment.username}</h2>
           </Link>
           <p className="text-muted-foreground text-sm">
-            {formatDistanceToNow(new Date(comment.created_at), {
-              addSuffix: true,
-            })}
+            {timeAgo(comment.created_at)}
           </p>
         </div>
       </div>

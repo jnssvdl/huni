@@ -16,10 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { User } from "@supabase/supabase-js";
-import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import UpdateDialog from "./update-dialog";
 import DeleteDialog from "./delete-dialog";
+import { timeAgo } from "@/lib/time-ago";
 
 type PostItemProps = {
   post: Post;
@@ -49,9 +49,7 @@ export default function PostItem({ post, user_id, innerRef }: PostItemProps) {
               <h3 className="font-bold hover:underline">{post.username}</h3>
             </Link>
             <p className="text-muted-foreground text-sm">
-              {formatDistanceToNow(new Date(post.created_at), {
-                addSuffix: true,
-              })}
+              {timeAgo(post.created_at)}
             </p>
           </div>
         </div>
@@ -95,7 +93,7 @@ export default function PostItem({ post, user_id, innerRef }: PostItemProps) {
         <TrackItem track={post.track} />
       </div>
 
-      <div className="space-x-4">
+      <div className="space-x-2">
         <LikeButton
           post_id={post.post_id}
           likeCount={post.like_count}
