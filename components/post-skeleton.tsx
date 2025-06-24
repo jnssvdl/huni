@@ -34,7 +34,7 @@ export default function PostSkeleton() {
       </div>
 
       {/* Action buttons skeleton */}
-      <div className="flex space-x-4">
+      <div className="flex space-x-2">
         <Skeleton className="h-8 w-14 rounded-full" />
         <Skeleton className="h-8 w-14 rounded-full" />
       </div>
