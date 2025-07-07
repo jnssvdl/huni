@@ -25,6 +25,7 @@ export default function FollowButton({
     mutationFn: followUser,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["profile", username] });
+      queryClient.invalidateQueries({ queryKey: ["feed", "following"] });
     },
   });
 
@@ -32,6 +33,7 @@ export default function FollowButton({
     mutationFn: unfollowUser,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["profile", username] });
+      queryClient.invalidateQueries({ queryKey: ["feed", "following"] });
     },
   });
 
